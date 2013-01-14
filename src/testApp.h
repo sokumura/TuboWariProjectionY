@@ -10,7 +10,7 @@
 
 class uiWindow : public ofxFensterListener {
 public:
-    
+    uiWindow();
     void setup();
     
     void update();
@@ -49,5 +49,7 @@ public:
     //fenster
     uiWindow ui;
     int counter;
-		
+    
+    
+    
 };

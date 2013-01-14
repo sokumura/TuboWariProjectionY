@@ -11,18 +11,37 @@ bool doSave;
 bool doLoad;
 
 //no use xml
-bool trCaptureBg[XTION_NUM] = {false, false};
-bool trFreeBg[XTION_NUM] = {false, false};
+bool trCaptureBg[XTION_NUM];
+bool trFreeBg[XTION_NUM];
 //
 
-int bgCapturePlay[XTION_NUM] = {10, 10};//1
-int thresholdNear[XTION_NUM] = {50, 50};//2
-int thresholdFar[XTION_NUM] = {8000, 8000};//3
-bool bUseBgDepth[XTION_NUM] = {false, false};//4
+int bgCapturePlay[XTION_NUM];//1
+int thresholdNear[XTION_NUM];//2
+int thresholdFar[XTION_NUM];//3
+bool bUseBgDepth[XTION_NUM];//4
+float rotx[XTION_NUM];
+float roty[XTION_NUM];
+float rotz[XTION_NUM];
+ofVec3f axis[XTION_NUM];
 
+//グローバルの初期化
+uiWindow::uiWindow(){
+    for (int i = 0; i < XTION_NUM; i++) {
+        tex[i].allocate(640, 480, GL_RGBA);
+        monoTexture[i].allocate(640, 480, GL_LUMINANCE);
+        trCaptureBg[i] = false;
+        trFreeBg[i] = false;
+        bgCapturePlay[i] = 10;//1
+        thresholdNear[i] = 50;//2
+        thresholdFar[i] = 8000;//3
+        bUseBgDepth[i] = false;//4
+        rotx[i] = 0.0f;
+        roty[i] = 0.0f;
+        rotz[i] = 0.0f;
+        axis[i] = ofVec3f(248, 272, -7760);
+    }
+}
 
-
-int a,b,c,d;
 
 //-xtions
 //////////////////
@@ -58,18 +77,25 @@ void uiWindow::setup(){
     gui.headerPage->addButton("Save to Xml", doSave);
     gui.headerPage->addButton("Load to Xml", doLoad);
     for (int i = 0; i < XTION_NUM; i++) {
+
         
-        tex[i].allocate(640, 480, GL_RGBA);
-        monoTexture[i].allocate(640, 480, GL_LUMINANCE);
+        //gui
         if(i > 0) gui.addTitle("Xtion No." + ofToString(i + 1)).setNewColumn(true);
         else gui.addTitle("Xtion No." + ofToString(i + 1));
         gui.addContent("depth_map" + ofToString(i+1), tex[i]);
         gui.addRangeSlider("thresholds:near_far"+ ofToString(i+1), thresholdNear[i], thresholdFar[i], 0, 10000);
+        gui.addSlider("axis.x", axis[i].x, -1000, 1000);
+        gui.addSlider("axis.y", axis[i].y, -1000, 1000);
+        gui.addSlider("axis.z", axis[i].z, -100000, -5000);
+        gui.addSlider("rotx", rotx[i], -180, 180);
+        gui.addSlider("roty", roty[i], -180, 180);
+        gui.addSlider("rotz", rotz[i], -180, 180);
         gui.addToggle("useBgDepth"+ ofToString(i+1), bUseBgDepth[i]).setNewColumn(true);
         gui.addButton("bgCapture()"+ ofToString(i+1), trCaptureBg[i]);
         gui.addButton("bgFree()"+ ofToString(i+1), trFreeBg[i]);
         gui.addSlider("capturePlay"+ ofToString(i+1), bgCapturePlay[i], 0, 200);
     }
+    
     
 }
 
@@ -79,7 +105,6 @@ void uiWindow::update(){
         tex[i].loadData(p, 640, 480, GL_RGBA);
         const unsigned char * q = xtions.getDepthGenerator(i).getMonoTexture();
         monoTexture[i].loadData(q, 640, 480, GL_LUMINANCE);
-        
         //button
         if (trCaptureBg[i]) {
             xtions.getDepthGenerator(i).runCapture();
@@ -134,20 +159,18 @@ void uiWindow::draw(){
 //--------------------------------------------------------------
 void testApp::setup(){
     printf("testApp setup() が呼ばれました。\n");
+    //ofSetVerticalSync(true);
 //fenster
 	ofxFenster * win = ofxFensterManager::get()->createFenster(400 , 0, 1300, 900, OF_WINDOW);
 	win -> addListener(new uiWindow());
-	//win -> setBackgroundColor(0,0,0);
     ui.setup();
     ofxFensterManager::get()->getPrimaryWindow()->setWindowPosition(-1279, 182);
     ofxFensterManager::get()->getPrimaryWindow()->toggleFullscreen();
 //--fenster
 //xtion--
     xtions.setup();
-
     
 //--xtion
-    
 }
 
 //--------------------------------------------------------------
@@ -157,12 +180,21 @@ void testApp::update(){
     
     
     //--xtion
-    
-
+    counter++;
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
+    ofSetColor(255);
+    if (sin(ofGetElapsedTimef()) < -0.9) ofSetColor(0.0f, 0.0f, 255.0f, 255.0f);
+    else if (sin(ofGetElapsedTimef()) > 0.9) ofSetColor(0, 255.0f, 0.0f, 255.0f);
+    else ofSetColor(200, 0, 0, 255.0f);
+    ofCircle(100.0f, 100.0f, 100.0f * sin(ofGetElapsedTimef()), 10.0f);
+    ofSetColor(255);
+    
+    xtions.testDraw();
+    
+    
 
 }
 

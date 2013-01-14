@@ -18,25 +18,33 @@
 #include "XnCppWrapper.h"
 #include "myDepthGenerator.h"
 
-#define XTION_NUM 2
-
 extern int thresholdNear[XTION_NUM];
 extern int thresholdFar[XTION_NUM];
 
+extern float rotx[XTION_NUM];
+extern float roty[XTION_NUM];
+extern float rotz[XTION_NUM];
+extern ofVec3f axis[XTION_NUM];
+
+
 class myXtionOperator {
 public:
+    
+    
     myXtionOperator();
     ~myXtionOperator();
     
     void setup();
     void update();
-    void testDraw(float x, float y, float w = 640.0f, float h = 480.0f);
+    void testDraw();
     void customEnumerateProductionTrees(xn::Context& con, XnProductionNodeType type);
+    
+    //ofVboMesh
     
     myDepthGenerator& getDepthGenerator(int index);
     int counter;
     
-    ofVboMesh vboMesh;
+    
 
 private:
     myXtionOperator(const myXtionOperator& other);
@@ -49,7 +57,14 @@ private:
     
     xn::EnumerationErrors errors;
     void logErrors(xn::EnumerationErrors& rErrors);
-
+    
+    ofVec3f getNormal(ofVec3f& a, ofVec3f& b, ofVec3f& c);
+    
+    
+    void sortDepthVectors();
+    void generateMesh(int i);
+    
+    void manageThePositionOfVector(ofVec3f& value, ofVec3f posXtion = ofVec3f(0,0,0), ofVec3f deg = ofVec3f(0,0,0));
     
 };
 

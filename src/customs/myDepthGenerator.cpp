@@ -7,11 +7,32 @@
 
 #include "myDepthGenerator.h"
 
+
+//--change to real world
+const float FovX = 1.0144686707507438;
+const float FovY = 0.78980943449644714;
+const float XtoZ = tanf(FovX / 2) * 2;
+const float YtoZ = tanf(FovY / 2) * 2;
+const unsigned int Xres = 640;
+const unsigned int Yres = 480;
+
+ofVec3f ConvertProjectiveToRealWorld(float x, float y, float z) {
+	return ofVec3f((x / Xres - .5f) * z * XtoZ,
+                   (y / Yres - .5f) * z * YtoZ,
+                   z);
+}
+
+
 myDepthGenerator::myDepthGenerator(){
+    step = 2;
+    pointSize = 0.5f;
+
+    
+    
     bUpdateMasks = false;
     // make new map mode -> default to 640 x 480 @ 30fps
-    out_put_modes.nXRes = XN_VGA_X_RES;
-    out_put_modes.nYRes = XN_VGA_Y_RES;
+    out_put_modes.nXRes = w = XN_VGA_X_RES;
+    out_put_modes.nYRes = h = XN_VGA_Y_RES;
     out_put_modes.nFPS  = 30;
     
     totalPixel = out_put_modes.nXRes * out_put_modes.nYRes;
@@ -28,8 +49,9 @@ myDepthGenerator::~myDepthGenerator(){
 }
 //----------------------------------------------
 bool myDepthGenerator::setup(xn::NodeInfo const& node, int num){
-    depthMIN = 10000;
-    depthMAX = 0;
+    depthMAX = zThresholdFar = 10000;
+    depthMIN = zThresholdNear = 0;
+    
     xtionNum = num;
     XnStatus result = XN_STATUS_OK;
     result = node.GetInstance(depth_generator);
@@ -40,7 +62,8 @@ bool myDepthGenerator::setup(xn::NodeInfo const& node, int num){
         depth_generator.SetMapOutputMode(out_put_modes);
         return true;
     }
-    
+    vboMesh.setMode(OF_PRIMITIVE_POINTS);
+    vboMesh.disableNormals();
     
 }
 //----------------------------------------------
@@ -51,19 +74,62 @@ void myDepthGenerator::startGenerating(){
 }
 
 //----------------------------------------------
-void myDepthGenerator::update(soDepthThresholds thresholds){
-    
+bool myDepthGenerator::update(soDepthThresholds thresholds){
+    bool isNewDataAvailable = false;
     if (depth_generator.IsNewDataAvailable()) {
         depth_generator.WaitAndUpdateData();
         depth_generator.GetMetaData(dmd);
         
         privThresholds = thresholds;
-        
+
         generateTexture();
-        generateMonoTexture();
-        
+        //generateMonoTexture();
+        generateCurrentDepth();
+        generateVectors();
+        isNewDataAvailable = true;
     }
-    
+    return isNewDataAvailable;
+    counter++;
+}
+
+void myDepthGenerator::generateVectors(){//currentTexture to vector. only without 0.
+    vboMesh.clear();
+    depthVecs.clear();
+    int numberOfVecs = 0;
+    int stepHalf = int(step / 2);
+    int X = out_put_modes.nXRes;
+    int Y = out_put_modes.nYRes;
+    for (int y = step; y < Y - 1 - step; y += step) {
+        for (int x = stepHalf; x < X - 1 - step - stepHalf; x += step) {
+            XnDepthPixel pix = currentDepth[X * y + x];
+            if (pix > 0.2f) {
+                ofVec3f vec = ConvertProjectiveToRealWorld(x, y,  (-1) * pix + 5000.0f);
+//                  ofVec3f vec = ofVec3f(x, y, pix);
+//                vec += localAxis;
+//                if (degrees.y != 0) {//y軸回転
+//                    vec.x = (vec.x - localAxis.x) * cos(degrees.y) - (vec.z - localAxis.z) * sin(degrees.y) + localAxis.x;
+//                    vec.z = (vec.x - localAxis.x) * sin(degrees.y) + (vec.z - localAxis.z) * cos(degrees.y) + localAxis.z;
+//                }
+                depthVecs.push_back(vec);
+                numberOfVecs++;
+            }
+        }
+    }
+    vboMesh.addVertices(depthVecs);
+}
+//----------------------------------------------
+void myDepthGenerator::draw(ofVec3f & pos, float degx, float degy, float degz){
+    ofPushMatrix();
+    ofTranslate(pos.x, pos.y, pos.z);
+    ofRotateX(degx);
+    ofRotateY(degy);
+    ofRotateZ(degz);
+    ofScale(0.3, 0.3);
+    vboMesh.setMode(OF_PRIMITIVE_POINTS);
+    vboMesh.draw();
+    ofPopMatrix();
+//    glTranslatef(0.0f, 0.0f, 0.0f);
+//    glTranslatef(0.0f, 0.0f, 0.0f);
 }
 
 //----------------------------------------------
@@ -72,81 +138,23 @@ XnMapOutputMode& myDepthGenerator::getMapMode() {
 }
 //--------------------
 void myDepthGenerator::runCapture(){
-    captureBgDepth();
+    //captureBgDepth();
+    planeBgCapthre();
     bgCaptureCount++;
 }
 
-//----------------------------------------------
-void myDepthGenerator::captureBgDepth(){
+void myDepthGenerator::planeBgCapthre(){
     const XnDepthPixel * bg = dmd.Data();
-    unsigned int X = out_put_modes.nXRes;
-    unsigned int Y = out_put_modes.nYRes;
-    unsigned short addition = bgCaptureCount;
-    int counter6[9] = {0,0,0,
-                        0,0,0,
-                        0,0,0};
-    XN_ASSERT(bg);
+    XN_ASSERT(depth);
+    
+    if (dmd.FrameID() == 0) return;
     for (int i = 0; i < totalPixel; i++) {
-            if (i == 0) {//左上角
-                bgDepth[i] =
-                (bg[i] + bg[i+1] +
-                 bg[i + X] + bg[i + X +1]) / 4
-                - addition;
-                counter6[0]++;
-            } else if (i == X - 1) {//右上角
-                bgDepth[i] =
-                (bg[i] + bg[i-1] +
-                 bg[i + X] + bg[i + X -1]) / 4
-                - addition;
-                counter6[1]++;
-            } else if (i == X * Y - X) {//左下角
-                bgDepth[i] =
-                (bg[i] + bg[i+1] +
-                 bg[i - X] + bg[i - X +1]) / 4
-                - addition;
-                counter6[2]++;
-            } else if (i == X * Y - 1) {//右下角
-                bgDepth[i] =
-                (bg[i] + bg[i - 1] +
-                 bg[i - X] + bg[i - X -1]) / 4
-                - addition;
-                counter6[3]++;
-            }else if (i % X == 0 && i >= X && i < X * Y - X) {// 左端
-                bgDepth[i] =
-                (bg[i] + bg[i+1] +
-                 bg[i - X] + bg[i - X +1] +
-                 bg[i + X] + bg[i + X +1]) / 6
-                - addition;
-                counter6[4]++;
-            } else if (i % X == X - 1 && i >= X && i < X * Y - X) {//右端
-                bgDepth[i] = 
-                (bg[i] + bg[i - 1] +
-                 bg[i - X] + bg[i - X -1] +
-                 bg[i + X] + bg[i + X -1]) / 6
-                - addition;
-                counter6[5]++;
-            } else if (i < X) {//上端
-                bgDepth[i] =
-                (bg[i] + bg[i+1] + bg[i-1] +
-                 bg[i + X] + bg[i + X - 1] + bg[i + X +1]) / 6
-                - addition;
-                counter6[6]++;
-            } else if (i >= X * Y - X) {//下端
-                bgDepth[i] =
-                (bg[i] + bg[i+1] + bg[i-1] +
-                 bg[i - X] + bg[i - X - 1] + bg[i - X +1] )/ 6
-                - addition;
-                 counter6[7]++;
-            } else {//その他
-                bgDepth[i] =
-                (bg[i] + bg[i+1] + bg[i-1] +
-                bg[i - X] + bg[i - X - 1] + bg[i - X +1] +
-                 bg[i + X] + bg[i + X - 1] + bg[i + X +1]) / 9
-                - addition;
-                counter6[8]++;
-            }
+        bgDepth[i] = bg[i] - bgCaptureCount;
     }
 }
+
+//----------------------------------------------
+
 //--------------
 void myDepthGenerator::freeBgDepth(){
     for (int i = 0; i < totalPixel; i++) {
@@ -154,15 +162,38 @@ void myDepthGenerator::freeBgDepth(){
     }
     bgCaptureCount = 0;
 }
-//--------------
+//----------------------------------------------
 unsigned int myDepthGenerator::getCaptureCount() const{
     return bgCaptureCount;
+}
+//----------------------------------------------
+void  myDepthGenerator::generateCurrentDepth(){
+    const XnDepthPixel * depth = dmd.Data();
+    XN_ASSERT(depth);
+    if (dmd.FrameID() == 0) return;
+    
+    int i = 0;
+    float max = 255;
+    for (XnUInt16 y = 0; y < dmd.YRes(); y++) {
+        XnDepthPixel * texture = currentDepth + y * dmd.XRes();
+		for (XnUInt16 x = 0; x < dmd.XRes(); x++, i++, depth++) {
+            if (bBgDepth && bgDepth[i] - capturePlay <= *depth) {
+                currentDepth[i] = 0;
+                continue;
+            }
+            if (*depth > privThresholds.near && *depth < privThresholds.far){
+                currentDepth[i] = *depth;
+            } else {
+                currentDepth[i] = 0;
+            }
+        }
+    }
 }
 
 //-----------------------------
 void myDepthGenerator::generateMonoTexture() {
     const XnDepthPixel * depth = dmd.Data();
-    //XN_ASSERT(depth);
+    XN_ASSERT(depth);
     if (dmd.FrameID() == 0) return;
     
     int i = 0;
@@ -180,12 +211,8 @@ void myDepthGenerator::generateMonoTexture() {
                 *texture = 0;
         }
     }
-    
 }
 
-const unsigned char * myDepthGenerator::getMonoTexture() const{
-    return mono_texture;
-}
 
 //---------------
 void myDepthGenerator::generateTexture() {
@@ -224,8 +251,20 @@ void myDepthGenerator::generateTexture() {
     }
 }
 
+
+const unsigned char * myDepthGenerator::getMonoTexture() const{
+    const unsigned char * pointer = mono_texture;
+    return pointer;
+}
+
 const unsigned char * myDepthGenerator::getMonitorTexture() const{
-    return monitor_texture;
+    const unsigned char * pointer = monitor_texture;
+    return pointer;
+}
+
+const XnDepthPixel * myDepthGenerator::getDistanceTexture() const{
+    const XnDepthPixel * pointer = currentDepth;
+    return pointer;
 }
 
 void myDepthGenerator::console(bool bOut){

@@ -8,6 +8,16 @@
 
 #include "myXtionOperator.h"
 
+//mesh
+ofVec3f myXtionOperator::getNormal(ofVec3f& a, ofVec3f& b, ofVec3f& c) {
+	ofVec3f side1 = a - b;
+	ofVec3f side2 = c - b;
+	ofVec3f normal = side1.cross(side2);
+	normal.normalize();
+	return normal;
+}
+//
+
 myXtionOperator::myXtionOperator(){
 
 
@@ -17,10 +27,8 @@ myXtionOperator::~myXtionOperator(){
 }
 
 void myXtionOperator::setup(){
-    cout << "OpenNI ココカラ☆" << endl;
+    cout << "OpenNI operation was get started" << endl;
     context.setup();
-    
-    //customEnumerateProductionTrees(context.getXnContext(), XN_NODE_TYPE_DEVICE);
     customEnumerateProductionTrees(context.getXnContext(), XN_NODE_TYPE_DEPTH);
     
     xn::NodeInfoList nodeList;
@@ -62,22 +70,47 @@ void myXtionOperator::setup(){
     generatorNum = geneNum;
     printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!\n%i 個のジェネレーターを作りました\n!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", generatorNum);
     
-    //mesh
-    vboMesh.setMode(OF_PRIMITIVE_POINTS);
     
-}
-//--------------------------------------
-void myXtionOperator::update(){
-    for (int i = 0; i < generatorNum; i++) {
-        thresholds[i].near = thresholdNear[i];
-        thresholds[i].far = thresholdFar[i];
-        depth_GRs[i].update(thresholds[i]);
+    //vboMesh
+    for (int i = 0; i < XTION_NUM; i++) {
+        
     }
     
 }
 //--------------------------------------
-void myXtionOperator::testDraw(float x, float y, float w, float h){
+void myXtionOperator::update(){
+    int isNewNum = 0;
+    for (int i = 0; i < generatorNum; i++) {//generatorごと
+        //thresholdを更新
+        thresholds[i].near = thresholdNear[i];
+        thresholds[i].far = thresholdFar[i];
+        bool isNew = depth_GRs[i].update(thresholds[i]);
+        if(isNew) generateMesh(i);
+    }
     
+    
+}
+//--------------------------------------
+void myXtionOperator::sortDepthVectors(){
+    
+}
+//--------------------------------------
+void myXtionOperator::generateMesh(int i){
+
+}
+/*
+void myXtionOperator::manageThePositionOfVector(ofVec3f& value, ofVec3f posXtion, ofVec3f deg){
+    value += posXtion;
+    value.z *= cos(deg.y) * cos(deg.x);
+    value.y *= sin(deg.x) * sin(deg.z);
+    value.x *= sin(deg.y) * cos(deg.z);
+}
+*/
+//--------------------------------------
+void myXtionOperator::testDraw(){
+    for (int i = 0; i < generatorNum; i++){
+        depth_GRs[i].draw(axis[i],rotx[i], roty[i], rotz[i]);
+    }
 }
 //--------------------------------------
 void myXtionOperator::customEnumerateProductionTrees(xn::Context& con, XnProductionNodeType type){
@@ -91,13 +124,14 @@ void myXtionOperator::customEnumerateProductionTrees(xn::Context& con, XnProduct
     }
     
     for (xn::NodeInfoList::Iterator it = nodes.Begin(); it != nodes.End(); ++it) {
+        /*
         cout << "ProductionTreeの列挙\n" <<
         xnProductionNodeTypeToString((*it).GetDescription().Type ) << ", " <<
         (*it).GetCreationInfo() << ", " <<
         (*it).GetInstanceName() << ", " <<
         (*it).GetDescription().strName << ", " <<
         (*it).GetDescription().strVendor << ", " << endl;
-        
+        */
         xn::NodeInfo info = *it;
         con.CreateProductionTree(info);
     }
@@ -115,3 +149,5 @@ void myXtionOperator::logErrors(xn::EnumerationErrors& rErrors){
         printf("%s failed: %s\n", desc, xnGetStatusString(it.Error()));
     }
 }
+
+/////////////////ofVboMesh////////////////
