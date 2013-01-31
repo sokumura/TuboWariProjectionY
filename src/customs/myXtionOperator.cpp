@@ -8,15 +8,6 @@
 
 #include "myXtionOperator.h"
 
-//mesh
-ofVec3f myXtionOperator::getNormal(ofVec3f& a, ofVec3f& b, ofVec3f& c) {
-	ofVec3f side1 = a - b;
-	ofVec3f side2 = c - b;
-	ofVec3f normal = side1.cross(side2);
-	normal.normalize();
-	return normal;
-}
-//
 
 myXtionOperator::myXtionOperator(){
 
@@ -62,7 +53,6 @@ void myXtionOperator::setup(){
             xn::NodeInfo info = *it;
             depth_GRs[geneNum].setup(info, geneNum);
             std::cout << "sensor[" << no << "]のdepthGeneratorを作成!!" << std::endl;
-            printf("depth_GRs[%u].getMapMode().nFPS : %u", geneNum, depth_GRs[geneNum].getMapMode().nFPS);
             depth_GRs[geneNum].startGenerating();
             geneNum++;
         }
@@ -72,8 +62,8 @@ void myXtionOperator::setup(){
     
     
     //vboMesh
-    for (int i = 0; i < XTION_NUM; i++) {
-        
+    for (int i = 0; i < generatorNum; i++) {
+        bNewDataXtion[i] = false;
     }
     
 }
@@ -81,31 +71,12 @@ void myXtionOperator::setup(){
 void myXtionOperator::update(){
     int isNewNum = 0;
     for (int i = 0; i < generatorNum; i++) {//generatorごと
-        //thresholdを更新
-        thresholds[i].near = thresholdNear[i];
-        thresholds[i].far = thresholdFar[i];
-        bool isNew = depth_GRs[i].update(thresholds[i]);
-        if(isNew) generateMesh(i);
+        bool isNew = depth_GRs[i].update();
+        if (isNew) bNewDataXtion[i] = true;
     }
     
-    
 }
-//--------------------------------------
-void myXtionOperator::sortDepthVectors(){
-    
-}
-//--------------------------------------
-void myXtionOperator::generateMesh(int i){
 
-}
-/*
-void myXtionOperator::manageThePositionOfVector(ofVec3f& value, ofVec3f posXtion, ofVec3f deg){
-    value += posXtion;
-    value.z *= cos(deg.y) * cos(deg.x);
-    value.y *= sin(deg.x) * sin(deg.z);
-    value.x *= sin(deg.y) * cos(deg.z);
-}
-*/
 //--------------------------------------
 void myXtionOperator::testDraw(){
     for (int i = 0; i < generatorNum; i++){

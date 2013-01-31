@@ -18,8 +18,7 @@
 #include "XnCppWrapper.h"
 #include "myDepthGenerator.h"
 
-extern int thresholdNear[XTION_NUM];
-extern int thresholdFar[XTION_NUM];
+
 
 extern float rotx[XTION_NUM];
 extern float roty[XTION_NUM];
@@ -44,7 +43,6 @@ public:
     myDepthGenerator& getDepthGenerator(int index);
     int counter;
     
-    
 
 private:
     myXtionOperator(const myXtionOperator& other);
@@ -52,20 +50,13 @@ private:
     
     ofxOpenNIContext context;
     myDepthGenerator depth_GRs[XTION_NUM];
-    soDepthThresholds thresholds[XTION_NUM];
+    bool bNewDataXtion[XTION_NUM];
+//    soDepthThresholds thresholds[XTION_NUM];
     int generatorNum;
     
     xn::EnumerationErrors errors;
     void logErrors(xn::EnumerationErrors& rErrors);
-    
-    ofVec3f getNormal(ofVec3f& a, ofVec3f& b, ofVec3f& c);
-    
-    
-    void sortDepthVectors();
-    void generateMesh(int i);
-    
-    void manageThePositionOfVector(ofVec3f& value, ofVec3f posXtion = ofVec3f(0,0,0), ofVec3f deg = ofVec3f(0,0,0));
-    
+
 };
 
 #endif

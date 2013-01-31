@@ -16,15 +16,23 @@
 #include "XnCppWrapper.h"
 #include "ofMain.h"
 
-#define TOTAL_PIXEL 640*480
-#define XTION_NUM 1
+#define XTION_NUM       1
+#define CAPTURE_WIDTH   XN_QVGA_X_RES //XN_VGA_X_RES
+#define CAPTURE_HEIGHT  XN_QVGA_Y_RES //XN_VGA_Y_RES
+#define TOTAL_PIXEL     CAPTURE_WIDTH * CAPTURE_HEIGHT
 
-struct soDepthThresholds {
-    int near = 3000;
-    int far = 5000;
-    int min = 0;
-    int max = 8000;
-};
+extern int thresholdNear[XTION_NUM];
+extern int thresholdFar[XTION_NUM];
+extern float scale[XTION_NUM];
+extern float aspect[XTION_NUM];
+extern float scaleZ[XTION_NUM];
+extern bool bCaptureBg[XTION_NUM];
+extern bool bSaveBgAsImage[XTION_NUM];
+
+extern float pointSize;
+extern int step;
+
+
 
 struct rot{
     float x = 0.0f;
@@ -39,15 +47,11 @@ public:
     ~myDepthGenerator();
 	bool setup(xn::NodeInfo const& node, int num);
     void startGenerating();
-    bool update(soDepthThresholds thresholds);
+    bool update();
     void draw(ofVec3f & pos, float degx, float degy, float degz);
     
     //options
-    int               getNumber() const { return xtionNum;};
-    
-    bool              bUpdateMasks;
-    XnMapOutputMode&  getMapMode();
-    
+    int               getNumber() const { return thisNum;};
     
     //背景のキャプチャ系
     void freeBgDepth();
@@ -57,47 +61,38 @@ public:
     void setCapturedCount();
     void runCapture();//
     
-    
     void  generateTexture();
-    void  generateMonoTexture();
     void  generateCurrentDepth();
     
     const unsigned char * getMonitorTexture() const;
-    const unsigned char * getMonoTexture() const;
     const XnDepthPixel * getDistanceTexture() const;
     const vector<ofVec3f> getDepthVectors() const {
         return depthVecs;
     };
-    void setStep(int s){
-        step = s;
-    };
-    void transformVectors(ofVec3f pos);
-    
-//    ofVec3f localAxis;
-//    rot localRot;
-//    ofVec3f lightPos;
-    float zThresholdNear, zThresholdFar;
+    void generateRealWorld( XnPoint3D * p3d);
+    XnPoint3D realWorld[TOTAL_PIXEL];
     
     int counter;
     
-    
+    unsigned char * getPointerOfUnsignedChar(){
+        const XnDepthPixel * depth = dmd.Data();
+        XN_ASSERT(depth);
+        if (dmd.FrameID() == 0) return;
+        
+        unsigned char * pix = (unsigned char * )depth;
+        return pix;
+    };
     
 private:
     myDepthGenerator(const myDepthGenerator& other);
 	myDepthGenerator& operator = (const myDepthGenerator&);
     
-    
     //new
-    ofNode camTarget;
-    ofLight light;
-    float camDistance, exCamDistance;
-    float pointSize;
-    int step;
     
     vector <ofVec3f> depthVecs;
     ofVboMesh vboMesh;
     
-    int w, h;
+    ofShortImage img;
     
     void console(bool bOut);
     
@@ -105,20 +100,19 @@ private:
     xn::DepthMetaData       dmd;
     XnMapOutputMode         out_put_modes;
     
-    void planeBgCapthre();
-    void captureBgDepth();
     
+    void planeBgCapthre();
     void generateVectors();
     
-    XnDepthPixel bgDepth[TOTAL_PIXEL];//背景のキャプチャ
-    unsigned char mono_texture[TOTAL_PIXEL];//thresholdに含まれる点を255,それ以外を0にしたtex
+    unsigned short bgDepth[TOTAL_PIXEL];//背景のキャプチャ
+    unsigned char captureBgCount[TOTAL_PIXEL];
+    unsigned char captureCount;
+    
     unsigned char monitor_texture[TOTAL_PIXEL *4];//全体を0~255にmapしたtex
     XnDepthPixel currentDepth[TOTAL_PIXEL];//thresholdの中に入ったものだけにした生データ
     
-    
     XnDepthPixel depthMIN, depthMAX;//デプスのmin,maxをいれておく
-    soDepthThresholds privThresholds;//このxtionのthresholds
-    int xtionNum;//このxtionの番号
+    int thisNum;//このxtionの番号
     
     unsigned int bgCaptureCount, totalPixel;
 	

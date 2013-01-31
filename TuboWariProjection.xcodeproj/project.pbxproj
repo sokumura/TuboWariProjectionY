@@ -38,6 +38,7 @@
 		100BD0E816344D4700676683 /* myDepthGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 100BD0E716344D4700676683 /* myDepthGenerator.cpp */; };
 		100BD0EA16346D5900676683 /* myXtionOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 100BD0E916346D5900676683 /* myXtionOperator.cpp */; };
 		1077bdf60382a48dff0cf235e6d9c4f7 /* ofxDisplayManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517fc8d6a09b7ba8281da32312d97225 /* ofxDisplayManagerMac.mm */; };
+		10B663F916B3B40600C250A4 /* uiWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 10B663F716B3B40600C250A4 /* uiWindow.cpp */; };
 		10b69de456aed1288fc9316b62b715d7 /* Tracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = a810df70319a10353588f5db2ed2e2b6 /* Tracker.cpp */; };
 		1250558f18dd430448dc5d82bb3d9cab /* ofxSimpleGuiPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96ef7b6909b7e5dcb6dd4d9afc0f0c04 /* ofxSimpleGuiPage.cpp */; };
 		1737cfaf9af894e541f716f718eb1dbb /* ofxSimpleGuiToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 304c685b166465a5ca75aea4148da5a1 /* ofxSimpleGuiToggle.cpp */; };
@@ -394,6 +395,8 @@
 		100BD0E616344BCA00676683 /* myDepthGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myDepthGenerator.h; sourceTree = "<group>"; };
 		100BD0E716344D4700676683 /* myDepthGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = myDepthGenerator.cpp; sourceTree = "<group>"; };
 		100BD0E916346D5900676683 /* myXtionOperator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = myXtionOperator.cpp; sourceTree = "<group>"; };
+		10B663F716B3B40600C250A4 /* uiWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = uiWindow.cpp; sourceTree = "<group>"; };
+		10B663F816B3B40600C250A4 /* uiWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uiWindow.h; sourceTree = "<group>"; };
 		10b57be35f1ba1957c5790c24523b621 /* ofxSimpleGuiSliderBase.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxSimpleGuiSliderBase.h; path = src/Controls/ofxSimpleGuiSliderBase.h; sourceTree = "<group>"; };
 		1435bd8cd3db79c624ec5377fa9e5291 /* GHOST_WindowX11.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = GHOST_WindowX11.h; path = ../../../addons/ofxFenster/libs/ghost/include/X11/GHOST_WindowX11.h; sourceTree = SOURCE_ROOT; };
 		15c04f4a9f2ed2044909bfb5c4784949 /* ofxSimpleGuiContent.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxSimpleGuiContent.cpp; path = src/Controls/ofxSimpleGuiContent.cpp; sourceTree = "<group>"; };
@@ -1507,6 +1510,8 @@
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
+				10B663F716B3B40600C250A4 /* uiWindow.cpp */,
+				10B663F816B3B40600C250A4 /* uiWindow.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1719,6 +1724,7 @@
 				100BD0951633FEF200676683 /* ofxUserGenerator.cpp in Sources */,
 				100BD0E816344D4700676683 /* myDepthGenerator.cpp in Sources */,
 				100BD0EA16346D5900676683 /* myXtionOperator.cpp in Sources */,
+				10B663F916B3B40600C250A4 /* uiWindow.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1793,6 +1799,7 @@
 					../../../addons/ofxOpenCv/src,
 					../../../addons/ofxOpenCv/libs/opencv/include,
 					/src/customs,
+					/opt/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CPLUSPLUSFLAGS = (
@@ -1865,6 +1872,7 @@
 					../../../addons/ofxOpenCv/src,
 					../../../addons/ofxOpenCv/libs/opencv/include,
 					/src/customs,
+					/opt/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CPLUSPLUSFLAGS = (
@@ -1907,6 +1915,8 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7)",
+					/opt/local/lib,
+					"\"$(SRCROOT)\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/bin/data/openni/lib\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../addons/ofxFenster/libs/ghost/lib/linux\"";
@@ -1955,6 +1965,11 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7)",
+					/opt/local/lib/libopencv_highgui.2.3.1.dylib,
+					/opt/local/lib/libopencv_imgproc.2.3.1.dylib,
+					/opt/local/lib/libopencv_core.2.3.1.dylib,
+					"\"$(SRCROOT)\"",
+					/opt/local/lib,
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/bin/data/openni/lib\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../addons/ofxFenster/libs/ghost/lib/linux\"";
