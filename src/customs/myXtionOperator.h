@@ -18,12 +18,17 @@
 #include "XnCppWrapper.h"
 #include "myDepthGenerator.h"
 
+#define  RECORD_FILE_PATH  "test.oni"///
 
+#define  USE_RECORED_DATA    true///
+#define  DO_RECORED          false///
 
-extern float rotx[XTION_NUM];
-extern float roty[XTION_NUM];
-extern float rotz[XTION_NUM];
-extern ofVec3f axis[XTION_NUM];
+#define CHECK_RC(nRetVal, what){\
+    if (nRetVal != XN_STATUS_OK){ \
+        printf("%s failed: %s\n", what, xnGetStatusString(nRetVal)); \
+        return nRetVal; \
+    }\
+};
 
 
 class myXtionOperator {
@@ -51,6 +56,8 @@ private:
     ofxOpenNIContext context;
     myDepthGenerator depth_GRs[XTION_NUM];
     bool bNewDataXtion[XTION_NUM];
+    
+    
 //    soDepthThresholds thresholds[XTION_NUM];
     int generatorNum;
     

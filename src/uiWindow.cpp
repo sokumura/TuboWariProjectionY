@@ -19,6 +19,7 @@ bool doLoad;
 
 //no use xml
 bool trFreeBg[XTION_NUM];
+bool trDrawGlobalMap = false;
 //
 
 int bgCapturePlay[XTION_NUM];//1
@@ -98,7 +99,7 @@ uiWindow::uiWindow(){
         axis[i] = ofVec3f(248.0f, 272.0f, -5000.0f);
         scale[i] = 0.4f;
         aspect[i] = 1.0f;
-        scaleZ[i] = 1.0f;
+        scaleZ[i] = 0.7f;
         
         bCaptureBg[i] = false;
         bSaveBgAsImage[i] = false;
@@ -213,13 +214,15 @@ void uiWindow::setup(){
         gui.addSlider("scale", scale[i], 0.001f, 5.0f);
         gui.addSlider("aspect x/y", aspect[i], 0.5f, 2.0f);
         gui.addSlider("scaleZ", scaleZ[i], 0.2f, 2.0f);
+        gui.addTitle("translate");
         gui.addSlider("axis.x", axis[i].x, -2000.0f, 2000.0f);
         gui.addSlider("axis.y", axis[i].y, -2000.0f, 2000.0f);
         gui.addSlider("axis.z", axis[i].z, -10000.0f, 0.0f);
-        gui.addSlider("rotx", rotx[i], -180, 180);
+        gui.addSlider("rotx", rotx[i], -180, 180).setNewColumn(true);
         gui.addSlider("roty", roty[i], -180, 180);
         gui.addSlider("rotz", rotz[i], -180, 180);
-        gui.addToggle("useBgDepth"+ ofToString(i+1), bUseBgDepth[i]).setNewColumn(true);
+        gui.addTitle("bgCapture");
+        gui.addToggle("useBgDepth"+ ofToString(i+1), bUseBgDepth[i]);
         gui.addToggle("bgCapture()"+ ofToString(i+1), bCaptureBg[i]);
         gui.addButton("save", bSaveBgAsImage[i]);
         gui.addButton("bgFree()"+ ofToString(i+1), trFreeBg[i]);
@@ -241,9 +244,6 @@ void uiWindow::update(){
             xtions.getDepthGenerator(i).freeBgDepth();
             trFreeBg[i] = false;
         }
-        
-        xtions.getDepthGenerator(i).bBgDepth = bUseBgDepth[i];
-        xtions.getDepthGenerator(i).capturePlay = bgCapturePlay[i];
     }
     if (doSave) {
         mySaveToXml();
@@ -263,7 +263,6 @@ void uiWindow::draw(){
 }
 
 void uiWindow::keyPressed(int key){
-    printf("anykey was pressed\n");
     switch (key) {
         case 267:
             gui.prevPage();
@@ -288,36 +287,22 @@ void uiWindow::keyPressed(int key){
 
 void uiWindow::addMappingSetup(){
     gui.addPage("mapping_set1");
-    gui.addTitle("global map");
     gui.addSlider2d("magu_t_l", maguchi[0], -50.0f, 210.0f, -50.0f, 210.0f);
-    gui.addBlank();
-    gui.addBlank();
     gui.addToggle("fill", bFilled[3]);
-    gui.addBlank();
-    gui.addBlank();
     gui.addSlider2d("magu_b_l", maguchi[3], -50.0f, 210.0f, (float)MONITOR_SIZE_H - 210.0f, (float)MONITOR_SIZE_H + 50.0f);
     //-----
     gui.addSlider("lineWidth", lineWidth, 0.0f, 10.0f).setNewColumn(true);
-    gui.addBlank();
     gui.addSlider2d("oku_t_l", okuguchi[0], 0.0f, MONITOR_SIZE_W / 2, 0.0f, MONITOR_SIZE_H /2 );
     gui.addToggle("fill", bFilled[4]);
-    gui.addBlank();
     gui.addSlider2d("oku_b_l", okuguchi[3], 0.0f, MONITOR_SIZE_W / 2, MONITOR_SIZE_H / 4, MONITOR_SIZE_H);
     //-----
-    gui.addBlank().setNewColumn(true);
-    gui.addToggle("fill", bFilled[0]);
+    gui.addToggle("fill", bFilled[0]).setNewColumn(true);
     gui.addSlider2d("oku_t_r", okuguchi[1], MONITOR_SIZE_W / 2, MONITOR_SIZE_W, 0.0f, MONITOR_SIZE_H / 2 );
-    gui.addBlank();
-    gui.addBlank();
     gui.addSlider2d("oku_b_r", okuguchi[2], MONITOR_SIZE_W / 2, MONITOR_SIZE_W, MONITOR_SIZE_H / 4, MONITOR_SIZE_H);
     gui.addToggle("fill", bFilled[2]);
     //------
     gui.addSlider2d("magu_t_l", maguchi[1], MONITOR_SIZE_W - 210.0f, MONITOR_SIZE_W + 50.0f, -50.0f, 210.0f).setNewColumn(true);
-    gui.addBlank();
-    gui.addBlank();
     gui.addToggle("fill", bFilled[1]);
-    gui.addBlank();
-    gui.addBlank();
     gui.addSlider2d("magu_b_l", maguchi[2], MONITOR_SIZE_W - 210.0f, MONITOR_SIZE_W + 50.0f, MONITOR_SIZE_H - 210.0f, MONITOR_SIZE_H + 50.0f);
     ///////////////////////////
     ///////////////////////////

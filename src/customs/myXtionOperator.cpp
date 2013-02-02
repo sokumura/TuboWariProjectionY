@@ -8,6 +8,18 @@
 
 #include "myXtionOperator.h"
 
+//===========================
+//globals
+//===========================
+xn::ScriptNode g_scriptNode;///
+//===========================
+//===========================
+
+XnBool fileExists(const char *fn){
+	XnBool exists;
+	xnOSDoesFileExist(fn, &exists);
+	return exists;
+}
 
 myXtionOperator::myXtionOperator(){
 
@@ -24,6 +36,45 @@ void myXtionOperator::setup(){
     
     xn::NodeInfoList nodeList;
     XnStatus nRetVal = XN_STATUS_OK;
+
+//    if( USE_RECORED_DATA ){
+//        context.getXnContext().OpenFileRecording(RECORD_FILE_PATH);
+//        xn::Player player;
+//        
+//        nRetVal = context.getXnContext().FindExistingNode(XN_NODE_TYPE_PLAYER, player);
+//        CHECK_RC(nRetVal, "Find player");
+//        
+//        xn::NodeInfoList nodeList;
+//        player.EnumerateNodes(nodeList);
+//        for( xn::NodeInfoList::Iterator it = nodeList.Begin();
+//            it != nodeList.End(); ++it){
+//            
+//            if( (*it).GetDescription().Type == XN_NODE_TYPE_DEPTH ){
+//                nRetVal = context.getXnContext().FindExistingNode(XN_NODE_TYPE_DEPTH, depth_GRs[it]);
+//                CHECK_RC(nRetVal, "Find depth node");
+//            }
+//        }
+//    } else {
+//        LOG_I("Reading config from: '%s'", CONFIG_XML_PATH);
+//        
+//        nRetVal = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
+//        
+//    }
+//    //
+//    xn::Recorder recorder;
+//    if( DO_RECORED && !USE_RECORED_DATA ){
+//        nRetVal = recorder.Create(g_Context);
+//    
+//        nRetVal = recorder.SetDestination(XN_RECORD_MEDIUM_FILE, RECORD_FILE_PATH);
+//        CHECK_RC(nRetVal, "Set recorder destination file");
+//        
+//        nRetVal = recorder.AddNodeToRecording(g_DepthGenerator, XN_CODEC_NULL);
+//        CHECK_RC(nRetVal, "Add depth node to recording");
+//        nRetVal = recorder.AddNodeToRecording(g_ImageGenerator, XN_CODEC_NULL);
+//        CHECK_RC(nRetVal, "Add image node to recording");
+//    }
+    
+    //
     nRetVal = context.getXnContext().EnumerateExistingNodes(nodeList);
     if (nRetVal != XN_STATUS_OK) {
         ofLogError("OpenNI error : context.EnumerateExistingNodes();", xnGetStatusString(nRetVal));
@@ -66,6 +117,7 @@ void myXtionOperator::setup(){
         bNewDataXtion[i] = false;
     }
     
+    
 }
 //--------------------------------------
 void myXtionOperator::update(){
@@ -74,13 +126,12 @@ void myXtionOperator::update(){
         bool isNew = depth_GRs[i].update();
         if (isNew) bNewDataXtion[i] = true;
     }
-    
 }
 
 //--------------------------------------
 void myXtionOperator::testDraw(){
     for (int i = 0; i < generatorNum; i++){
-        depth_GRs[i].draw(axis[i],rotx[i], roty[i], rotz[i]);
+        depth_GRs[i].draw();
     }
 }
 //--------------------------------------
@@ -95,14 +146,6 @@ void myXtionOperator::customEnumerateProductionTrees(xn::Context& con, XnProduct
     }
     
     for (xn::NodeInfoList::Iterator it = nodes.Begin(); it != nodes.End(); ++it) {
-        /*
-        cout << "ProductionTreeの列挙\n" <<
-        xnProductionNodeTypeToString((*it).GetDescription().Type ) << ", " <<
-        (*it).GetCreationInfo() << ", " <<
-        (*it).GetInstanceName() << ", " <<
-        (*it).GetDescription().strName << ", " <<
-        (*it).GetDescription().strVendor << ", " << endl;
-        */
         xn::NodeInfo info = *it;
         con.CreateProductionTree(info);
     }

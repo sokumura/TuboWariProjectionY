@@ -13,23 +13,20 @@ extern ofPoint targetPointA;
 extern ofPoint doorPos[5];
 extern bool bDoorDraw;
 extern ofPoint himawariPos;
-
 ////GLOBAL----
-
 
 void testApp::setup(){
     printf("testApp setup() が呼ばれました。\n");
     
     //ofSetVerticalSync(true);
 //fenster
-	ofxFenster * win = ofxFensterManager::get()->createFenster(0 , 0, 1280, 1024, OF_WINDOW);
+	ofxFenster * win = ofxFensterManager::get()->createFenster(0 , 0, 1280, 800, OF_WINDOW);
 	win -> addListener(new uiWindow());
     ui.setup();
     ofxFensterManager::get()->getPrimaryWindow()->setWindowPosition(-1279, 182);
     ofxFensterManager::get()->getPrimaryWindow()->toggleFullscreen();
 //--fenster
 //xtion--
-    if (XTION_NUM == 0) return;//----------------------
     xtions.setup();
     ofFbo::Settings s = ofFbo::Settings();
     s.width = 1024;
@@ -39,45 +36,54 @@ void testApp::setup(){
     s.depthStencilAsTexture = false;
     xtionFbo.allocate(s);
     
-    img.allocate(1024, 768, OF_IMAGE_COLOR_ALPHA);
-    test.allocate(1024, 768);
+    tex.allocate(1024, 768, GL_LUMINANCE);
+    mat = cv::Mat(1024, 768, CV_8UC1);
+    contourFinderSetup();
+    
 //--xtion
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
 	//xtion--
-    if (XTION_NUM == 0) return;//----------------------
-    
     xtionFbo.begin();
-    ofClear(0,0,0,255);
+        ofClear(0,0,0,255);
     xtionFbo.end();
     
     xtions.update();
+    
     xtionFbo.begin();
-    xtions.testDraw();
+        xtions.testDraw();
     xtionFbo.end();
-    ofPixels pixel = ofPixels();
-    xtionFbo.readToPixels(pixel);
-    img.setFromPixels(pixel);
-    cv::Mat imgCopy;
-    ofxCv::copy(img, imgCopy);
+    
+//    tex = xtionFbo.getTextureReference();
+//    ofPixels pix = ofPixels();
+//    tex.readToPixels(pix);//このpixにはしっかり入ってる。
+//    mat.data = pix.getPixels();//ここが変なのかな？
+//    cfinder.setThreshold(ofMap(mouseY, 0, 1000, 0, 255));//真っ白と真っ黒の境界線を抽出したい。
+//    cfinder.findContours(mat);
     //--xtion
     counter++;
 }
-
+//--------------------------------------------------------------
+void testApp::contourFinderSetup(){
+    cfinder.setFindHoles(true);
+    cfinder.setMinArea(10.0f);
+    cfinder.setMaxArea(1000.0f);
+    
+}
 //--------------------------------------------------------------
 void testApp::draw(){
     
-    if (XTION_NUM == 0) return;//----------------------
-    xtions.testDraw();
+    //xtions.testDraw();
     mappingDraw();
     
     //img.draw(0.0f, 0.0f);
-    
-    //test.draw(100,100);
-    //xtionFbo.draw(0.0f, 0.0f);
-    
+    ofSetColor(255);
+    xtionFbo.draw(0.0f, 0.0f);
+    //tex.draw(0, 0);
+    //cfinder.draw();
+
 }
 
 void testApp::mappingDraw(){
