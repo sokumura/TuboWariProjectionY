@@ -13,18 +13,21 @@
 
 #pragma once
 
+#include "ofxOpenNIHeaders.h"
 #include "XnCppWrapper.h"
-#include "ofxCv.h"
 #include "ofMain.h"
 
-using namespace ofxCv;
-using namespace cv;
-
 #define XTION_NUM       1
-#define CAPTURE_WIDTH   XN_QVGA_X_RES //XN_VGA_X_RES
-#define CAPTURE_HEIGHT  XN_QVGA_Y_RES //XN_VGA_Y_RES
+#define CAPTURE_WIDTH   XN_QVGA_X_RES
+#define CAPTURE_HEIGHT  XN_QVGA_Y_RES
 #define TOTAL_PIXEL     CAPTURE_WIDTH * CAPTURE_HEIGHT
+#define PROJECTION_SIZE_W   1024
+#define PROJECTION_SIZE_H   768
 
+#define  USE_RECORED_DATA    false
+#define  DO_RECORED          true
+
+extern xn::Recorder recorder[XTION_NUM];
 extern int bgCapturePlay[XTION_NUM];
 extern int thresholdNear[XTION_NUM];
 extern int thresholdFar[XTION_NUM];
@@ -70,6 +73,10 @@ public:
     
     void  generateTexture();
     void  generateCurrentDepth();
+    
+    xn::DepthGenerator & getXnDepthGenerator(){
+        return depth_generator;
+    };
     
     const unsigned char * getMonitorTexture() const;
     const XnDepthPixel * getDistanceTexture() const;

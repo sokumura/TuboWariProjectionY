@@ -13,12 +13,19 @@ extern ofPoint targetPointA;
 extern ofPoint doorPos[5];
 extern bool bDoorDraw;
 extern ofPoint himawariPos;
+
+extern int minArea;//11
+extern int maxArea;//12
+extern int nConsidered;
+extern bool bFindHoles;
+extern bool bUseApproximation;
+
 ////GLOBAL----
 
 void testApp::setup(){
     printf("testApp setup() が呼ばれました。\n");
     
-    //ofSetVerticalSync(true);
+    ofSetVerticalSync(true);
 //fenster
 	ofxFenster * win = ofxFensterManager::get()->createFenster(0 , 0, 1280, 800, OF_WINDOW);
 	win -> addListener(new uiWindow());
@@ -26,19 +33,21 @@ void testApp::setup(){
     ofxFensterManager::get()->getPrimaryWindow()->setWindowPosition(-1279, 182);
     ofxFensterManager::get()->getPrimaryWindow()->toggleFullscreen();
 //--fenster
+    
 //xtion--
     xtions.setup();
     ofFbo::Settings s = ofFbo::Settings();
     s.width = 1024;
     s.height = 768;
-    s.internalformat = GL_RGBA;
+    s.internalformat = GL_RGB;
     s.useDepth = false;
     s.depthStencilAsTexture = false;
     xtionFbo.allocate(s);
     
     tex.allocate(1024, 768, GL_LUMINANCE);
-    mat = cv::Mat(1024, 768, CV_8UC1);
-    contourFinderSetup();
+    pix.allocate(1024, 768, 3);
+    cImg.allocate(1024, 768);
+    gImg.allocate(1024, 768);
     
 //--xtion
 }
@@ -56,22 +65,20 @@ void testApp::update(){
         xtions.testDraw();
     xtionFbo.end();
     
-//    tex = xtionFbo.getTextureReference();
-//    ofPixels pix = ofPixels();
-//    tex.readToPixels(pix);//このpixにはしっかり入ってる。
-//    mat.data = pix.getPixels();//ここが変なのかな？
-//    cfinder.setThreshold(ofMap(mouseY, 0, 1000, 0, 255));//真っ白と真っ黒の境界線を抽出したい。
-//    cfinder.findContours(mat);
+    tex = xtionFbo.getTextureReference();
+    tex.readToPixels(pix);//このpixにはしっかり入ってる。
+    cImg.setFromPixels(pix);
+    gImg = cImg;
+    cfinder.findContours(gImg, minArea, maxArea, nConsidered, bFindHoles, bUseApproximation);
+    
+    if (counter == 100) {
+        printf("pix.size() : %u\npix.size() / 1024 : %d\npix.size() / 768 : %d\n", pix.size(), pix.size() / 1024, pix.size() / 768);
+    }
+    
     //--xtion
     counter++;
 }
-//--------------------------------------------------------------
-void testApp::contourFinderSetup(){
-    cfinder.setFindHoles(true);
-    cfinder.setMinArea(10.0f);
-    cfinder.setMaxArea(1000.0f);
-    
-}
+
 //--------------------------------------------------------------
 void testApp::draw(){
     
@@ -80,10 +87,11 @@ void testApp::draw(){
     
     //img.draw(0.0f, 0.0f);
     ofSetColor(255);
-    xtionFbo.draw(0.0f, 0.0f);
+    //xtionFbo.draw(0.0f, 0.0f);
     //tex.draw(0, 0);
     //cfinder.draw();
-
+    gImg.draw(0.0f, 0.0f);
+    cfinder.draw();
 }
 
 void testApp::mappingDraw(){
@@ -172,6 +180,12 @@ void testApp::mappingDraw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-    
+    if (key == 'r') {
+        xtions.startOniRecording(0);
+        printf("recStart\n");
+    } else if (key == 's') {
+        xtions.startOniRecording(0);
+        printf("recStop\n");
+    }
        
 }

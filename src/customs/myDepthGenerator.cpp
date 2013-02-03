@@ -64,6 +64,10 @@ bool myDepthGenerator::update(){
     bool isNewDataAvailable = false;
     if (depth_generator.IsNewDataAvailable()) {
         depth_generator.WaitAndUpdateData();
+//        if( DO_RECORED  && !USE_RECORED_DATA ){
+//            XnStatus nRetVal = recorder[thisNum].Record();
+//            CHECK_RC(nRetVal, "Record");
+//        }
         depth_generator.GetMetaData(dmd);
 
         generateTexture();

@@ -13,22 +13,10 @@
 #ifndef xtionExample_myXtionOperator_h
 #define xtionExample_myXtionOperator_h
 
-
-#include "ofxOpenNIHeaders.h"
-#include "XnCppWrapper.h"
 #include "myDepthGenerator.h"
 
-#define  RECORD_FILE_PATH  "test.oni"///
+#define  RECORD_FILE_PATH  "../../skeletonrec.oni"
 
-#define  USE_RECORED_DATA    true///
-#define  DO_RECORED          false///
-
-#define CHECK_RC(nRetVal, what){\
-    if (nRetVal != XN_STATUS_OK){ \
-        printf("%s failed: %s\n", what, xnGetStatusString(nRetVal)); \
-        return nRetVal; \
-    }\
-};
 
 
 class myXtionOperator {
@@ -48,6 +36,9 @@ public:
     myDepthGenerator& getDepthGenerator(int index);
     int counter;
     
+    
+    void startOniRecording(int n);
+    void stopOniRecording(int n);
 
 private:
     myXtionOperator(const myXtionOperator& other);
@@ -55,10 +46,10 @@ private:
     
     ofxOpenNIContext context;
     myDepthGenerator depth_GRs[XTION_NUM];
-    bool bNewDataXtion[XTION_NUM];
+    bool bNewDataXtion[XTION_NUM] = {false};
+    xn::Recorder * pRecorder[XTION_NUM] = {NULL};
+    bool bRecord[XTION_NUM] = {false};
     
-    
-//    soDepthThresholds thresholds[XTION_NUM];
     int generatorNum;
     
     xn::EnumerationErrors errors;

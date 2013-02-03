@@ -36,15 +36,13 @@ float scaleZ[XTION_NUM];
 bool bCaptureBg[XTION_NUM];
 bool bSaveBgAsImage[XTION_NUM];
 
-float pointSize = 2.0;//9
+float pointSize = 4.0;//9
 int step = 2;//10
-int minArea = 5;//11
-int maxArea = 1000;//12
-int nConsidered = 100;//13
+int minArea = 50;//11
+int maxArea = 500000;//12
+int nConsidered = 10;//13
 bool bFindHoles = true;//14
 bool bUseApproximation = true;//15
-
-
 
 //↑added to xmlset
 
@@ -194,11 +192,12 @@ void uiWindow::setup(){
     gui.addTitle("XTION SETTING");
     gui.addSlider("Mesh_PointSize", pointSize, 0.001f, 10.0f);
     gui.addSlider("step", step, 1, 20);
-    gui.addSlider("minArea", minArea, 0, 100);
-    gui.addSlider("maxArea", maxArea, 300, 10000);
-    gui.addSlider("nConsidered", nConsidered, 10, 100);
+    gui.addSlider("minArea", minArea, 0, 1000);
+    gui.addSlider("maxArea", maxArea, 30, 700000);
+    gui.addSlider("nConsidered", nConsidered, 10, 1000);
     gui.addToggle("bFindHoles", bFindHoles);
     gui.addToggle("bUseApproximation", bUseApproximation);
+    gui.addBlank();
     
     //mapping_set
     addMappingSetup();

@@ -1,10 +1,7 @@
 #pragma once
 
 #include "uiWindow.h"
-//#include "ofxOpenCv.h"
-//#include "ofxCv.h"
-
-
+#include "ofxOpenCv.h"
 
 class testApp : public ofBaseApp{
 
@@ -24,18 +21,19 @@ public:
     void gotMessage(ofMessage msg){};
     
     void mappingDraw();
-    void contourFinderSetup();
     
     //xtion
     ofFbo xtionFbo;
-    
-    ofTexture tex, testTex;
-    ofxCv::ContourFinder cfinder;
+    ofPixels pix;
+    ofTexture tex;
+    ofxCvColorImage cImg;
+    ofxCvGrayscaleImage gImg;
+    ofxCvContourFinder cfinder;
     
     //fenster
     uiWindow ui;
     int counter;
-    
-    cv::Mat mat;
 
 };
+
+
