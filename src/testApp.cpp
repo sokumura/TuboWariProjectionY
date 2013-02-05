@@ -65,6 +65,8 @@ void testApp::update(){
         xtions.testDraw();
     xtionFbo.end();
     
+    
+    
     tex = xtionFbo.getTextureReference();
     tex.readToPixels(pix);//このpixにはしっかり入ってる。
     cImg.setFromPixels(pix);
@@ -72,7 +74,7 @@ void testApp::update(){
     cfinder.findContours(gImg, minArea, maxArea, nConsidered, bFindHoles, bUseApproximation);
     
     if (counter == 100) {
-        printf("pix.size() : %u\npix.size() / 1024 : %d\npix.size() / 768 : %d\n", pix.size(), pix.size() / 1024, pix.size() / 768);
+
     }
     
     //--xtion

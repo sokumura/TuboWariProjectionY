@@ -7,8 +7,7 @@
 //
 
 /*
- DepthGenerator 1つが行う処理については全てここに書く
- 入出力に関しては、距離の数値を色の数値に変換しない。
+ DepthGenerator 1つが行う処理については全てここに書く。
  */
 
 #pragma once
@@ -17,7 +16,7 @@
 #include "XnCppWrapper.h"
 #include "ofMain.h"
 
-#define XTION_NUM       1
+#define XTION_NUM       2
 #define CAPTURE_WIDTH   XN_QVGA_X_RES
 #define CAPTURE_HEIGHT  XN_QVGA_Y_RES
 #define TOTAL_PIXEL     CAPTURE_WIDTH * CAPTURE_HEIGHT
@@ -27,7 +26,6 @@
 #define  USE_RECORED_DATA    false
 #define  DO_RECORED          true
 
-extern xn::Recorder recorder[XTION_NUM];
 extern int bgCapturePlay[XTION_NUM];
 extern int thresholdNear[XTION_NUM];
 extern int thresholdFar[XTION_NUM];
@@ -41,15 +39,12 @@ extern float rotz[XTION_NUM];//7
 extern ofVec3f axis[XTION_NUM];//8
 extern bool bCaptureBg[XTION_NUM];
 extern bool bSaveBgAsImage[XTION_NUM];
+extern float depthBgAverage[XTION_NUM];
+extern int realDepthMax[XTION_NUM];
+extern bool trLoadBg[XTION_NUM];
 
 extern float pointSize;
 extern int step;
-
-struct rot{
-    float x = 0.0f;
-    float y = 0.0f;
-    float z = 0.0f;
-};
 
 class myDepthGenerator {
 public:
@@ -66,11 +61,7 @@ public:
     
     
     //背景のキャプチャ系
-    void freeBgDepth();
-    unsigned int getCaptureCount() const;
-    void setCapturedCount();
-    void runCapture();//
-    
+    void  freeBgDepth();
     void  generateTexture();
     void  generateCurrentDepth();
     
@@ -103,29 +94,25 @@ private:
     ofVboMesh vboMesh;
     
     ofShortImage bgImg;
-    
-    bool loadBgImage();
-    
     xn::DepthGenerator      depth_generator;
     xn::DepthMetaData       dmd;
     XnMapOutputMode         out_put_modes;
     
+    void checkSwitchMethods();
+    void saveBgImage();
+    bool loadBgImage();
     
     void planeBgCapthre();
-    void generateVectors();
-    void saveBgImage();
-    void contourFinderSetup();
-    
+
     unsigned short bgDepth[TOTAL_PIXEL];//背景のキャプチャ
-    unsigned char captureBgCount[TOTAL_PIXEL];
-    unsigned char captureCount;
+    unsigned char captureBgCountByPix[TOTAL_PIXEL];
     unsigned char monitor_texture[TOTAL_PIXEL *4];//全体を0~255にmapしたtex
     XnDepthPixel currentDepth[TOTAL_PIXEL];//thresholdの中に入ったものだけにした生データ
     
     XnDepthPixel depthMIN, depthMAX;//デプスのmin,maxをいれておく
     int thisNum;//このxtionの番号
+    
     int counter;
-    //unsigned int bgCaptureCount;
 	
 };
 

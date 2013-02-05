@@ -37,4 +37,6 @@ public:
     
     void addMappingSetup();
     
+    bool trDrawGlobalMap = false;
+    
 };

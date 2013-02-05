@@ -7,12 +7,27 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "src/customs/myXtionOperator.h"
-         timestampString = "381583458.79615"
+         filePath = "src/customs/myDepthGenerator.cpp"
+         timestampString = "381717951.830824"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "14"
-         endingLineNumber = "14">
+         startingLineNumber = "40"
+         endingLineNumber = "40"
+         landmarkName = "myDepthGenerator::setup(xn::NodeInfo const&amp; node, int num)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/customs/myDepthGenerator.cpp"
+         timestampString = "381717951.830824"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "42"
+         endingLineNumber = "42"
+         landmarkName = "myDepthGenerator::setup(xn::NodeInfo const&amp; node, int num)"
+         landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>
 </Bucket>

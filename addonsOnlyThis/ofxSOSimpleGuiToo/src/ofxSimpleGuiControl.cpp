@@ -129,8 +129,9 @@ void ofxSimpleGuiControl::fixButtonDraw() {
     ofRect(width - fixboxWidth, 0.0f, fixboxWidth, fixboxWidth);
 }
 
-void ofxSimpleGuiControl::setFix(bool fix){
+ofxSimpleGuiControl &ofxSimpleGuiControl::setFix(bool fix){
     fixed = fix;
+    return *this;
 }
 
 void ofxSimpleGuiControl::disableFix(){

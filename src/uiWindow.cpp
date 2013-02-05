@@ -19,13 +19,13 @@ bool doLoad;
 
 //no use xml
 bool trFreeBg[XTION_NUM];
-bool trDrawGlobalMap = false;
+
 //
 
-int bgCapturePlay[XTION_NUM];//1
+
 int thresholdNear[XTION_NUM];//2
 int thresholdFar[XTION_NUM];//3
-bool bUseBgDepth[XTION_NUM];//4
+
 float rotx[XTION_NUM];//5
 float roty[XTION_NUM];//6
 float rotz[XTION_NUM];//7
@@ -33,8 +33,13 @@ ofVec3f axis[XTION_NUM];//8
 float scale[XTION_NUM];
 float aspect[XTION_NUM];
 float scaleZ[XTION_NUM];
-bool bCaptureBg[XTION_NUM];
-bool bSaveBgAsImage[XTION_NUM];
+int bgCapturePlay[XTION_NUM] = {50};//1
+bool bUseBgDepth[XTION_NUM] = {false};//4
+bool trLoadBg[XTION_NUM] = {false};
+bool bCaptureBg[XTION_NUM] = {false};
+bool bSaveBgAsImage[XTION_NUM] = {false};
+float depthBgAverage[XTION_NUM] = {0};
+int realDepthMax[XTION_NUM] = {0};
 
 float pointSize = 4.0;//9
 int step = 2;//10
@@ -86,11 +91,8 @@ void uiWindow::consoleOut(){
 uiWindow::uiWindow(){
     for (int i = 0; i < XTION_NUM; i++) {
         tex[i].allocate(CAPTURE_WIDTH, CAPTURE_HEIGHT, GL_RGBA);
-        trFreeBg[i] = false;
-        bgCapturePlay[i] = 10;//1
         thresholdNear[i] = 1600;//2
         thresholdFar[i] = 3400;//3
-        bUseBgDepth[i] = false;//4
         rotx[i] = 0.0f;
         roty[i] = 0.0f;
         rotz[i] = 0.0f;
@@ -98,9 +100,6 @@ uiWindow::uiWindow(){
         scale[i] = 0.4f;
         aspect[i] = 1.0f;
         scaleZ[i] = 0.7f;
-        
-        bCaptureBg[i] = false;
-        bSaveBgAsImage[i] = false;
     }
 }
 
@@ -214,18 +213,22 @@ void uiWindow::setup(){
         gui.addSlider("aspect x/y", aspect[i], 0.5f, 2.0f);
         gui.addSlider("scaleZ", scaleZ[i], 0.2f, 2.0f);
         gui.addTitle("translate");
-        gui.addSlider("axis.x", axis[i].x, -2000.0f, 2000.0f);
-        gui.addSlider("axis.y", axis[i].y, -2000.0f, 2000.0f);
+        gui.addSlider("axis.x", axis[i].x, -4000.0f, 4000.0f);
+        gui.addSlider("axis.y", axis[i].y, -4000.0f, 4000.0f);
         gui.addSlider("axis.z", axis[i].z, -10000.0f, 0.0f);
         gui.addSlider("rotx", rotx[i], -180, 180).setNewColumn(true);
         gui.addSlider("roty", roty[i], -180, 180);
         gui.addSlider("rotz", rotz[i], -180, 180);
         gui.addTitle("bgCapture");
         gui.addToggle("useBgDepth"+ ofToString(i+1), bUseBgDepth[i]);
-        gui.addToggle("bgCapture()"+ ofToString(i+1), bCaptureBg[i]);
+        gui.addButton("bgCapture()", bCaptureBg[i]);
         gui.addButton("save", bSaveBgAsImage[i]);
-        gui.addButton("bgFree()"+ ofToString(i+1), trFreeBg[i]);
-        gui.addSlider("capturePlay"+ ofToString(i+1), bgCapturePlay[i], 0, 200);
+        gui.addButton("load", trLoadBg[i]).setFix(true);
+        gui.addButton("bgFree()", trFreeBg[i]);
+        gui.addSlider("capturePlay", bgCapturePlay[i], 0, 200);
+        gui.addValueMonitor("realDepthMAX", realDepthMax[i]);
+        gui.addValueMonitor("depthBgAverage", depthBgAverage[i]);
+        
     }
     gui.setPage(1);
     

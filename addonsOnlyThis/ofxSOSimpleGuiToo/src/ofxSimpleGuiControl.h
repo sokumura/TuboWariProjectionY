@@ -32,11 +32,12 @@ public:
 	ofxSimpleGuiControl& setEmptyColor();
 	ofxSimpleGuiControl& setKeyboardShortcut(char c);
     ofxSimpleGuiControl& set2DSliderBGColor(bool clickable = true);
+    ofxSimpleGuiControl &setFix(bool fix);
     
     bool isFixed() const;
     void toggleFix();
     void fixButtonDraw();
-    void setFix(bool fix);
+
     void enableFix();
     void disableFix();
 	
