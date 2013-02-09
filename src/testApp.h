@@ -1,7 +1,6 @@
 #pragma once
 
 #include "uiWindow.h"
-#include "ofxOpenCv.h"
 
 class testApp : public ofBaseApp{
 

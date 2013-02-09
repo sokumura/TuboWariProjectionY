@@ -104,6 +104,8 @@ public:
     rangeSliderInt		&addRangeSlider(string name, int &_valueS, int &_valueL, int min, int max);
     rangeSliderFloat		&addRangeSlider(string name, float &_valueS, float &_valueL, float min, float max);
 	ofxSimpleGuiSlider2d		&addSlider2d(string name, ofPoint& value, float xmin, float xmax, float ymin, float ymax);
+    ofxSimpleGuiContentSlider2d &addContentSlider2d(string name, int nBlock, ofBaseDraws & content, ofPoint& value, float xmin, float xmax, float ymin, float ymax);
+    
 	ofxSimpleGuiTitle			&addTitle(string name="", float height = 0);
 	ofxSimpleGuiToggle			&addToggle(string name, bool &value);
 	ofxSimpleGuiColorPicker		&addColorPicker(string name, ofFloatColor& color);

@@ -7,7 +7,7 @@ ofxSimpleGuiSlider2d::ofxSimpleGuiSlider2d(string name, ofPoint& value, float xm
 	max.set(xmax, ymax);
 	this->value = &value;
 	controlType = "Slider2D";
-    width = config->width; //他のcontrolと同じ。つもり。
+    width = config->width; 
     if (xmin > xmax) std::swap(xmin, xmax);
     if (ymin > ymax) std::swap(ymin, ymax);
     sliderHeight = width * (ymax - ymin) / (xmax - xmin);

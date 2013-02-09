@@ -26,6 +26,7 @@
 #define  USE_RECORED_DATA    false
 #define  DO_RECORED          true
 
+extern bool bDraw[XTION_NUM];
 extern int bgCapturePlay[XTION_NUM];
 extern int thresholdNear[XTION_NUM];
 extern int thresholdFar[XTION_NUM];

@@ -25,7 +25,7 @@ void ofxSimpleGuiToo::setup(string firstPageName) {
 	titleButton		= NULL;
 
 	headerPage		= &addPage("Header");
-	headerPage->height = config->buttonHeight * 2;
+	headerPage->height = config->buttonHeight * 1.6;
 	headerPage->width = 0;
 	titleButton = &headerPage->addButton(firstPageName, changePage);
     headerPage->addValueMonitor("FTP", ftp);
@@ -317,6 +317,10 @@ ofxSimpleGuiValueMonitorFloat    &ofxSimpleGuiToo::addValueMonitor(string _name,
 ofxSimpleGuiSlider2d &ofxSimpleGuiToo::addSlider2d(string name, ofPoint& value, float xmin, float xmax, float ymin, float ymax) {
 //	if(!config) setup();
 	return pages[currentPageIndex]->addSlider2d(name, value, xmin, xmax, ymin, ymax);
+}
+
+ofxSimpleGuiContentSlider2d &ofxSimpleGuiToo::addContentSlider2d(string name, int nBlock, ofBaseDraws & content, ofPoint& value, float xmin, float xmax, float ymin, float ymax){
+    return pages[currentPageIndex]->addContentSlider2d(name, nBlock, content, value, xmin, xmax, ymin, ymax);
 }
 
 ofxSimpleGuiTitle &ofxSimpleGuiToo::addTitle(string name, float height) {

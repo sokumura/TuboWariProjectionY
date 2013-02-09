@@ -13,6 +13,7 @@
 //xtions
 myXtionOperator xtions;
 ofTexture tex[XTION_NUM];
+ofxCvContourFinder cfinder;
 
 bool doSave;
 bool doLoad;
@@ -22,7 +23,7 @@ bool trFreeBg[XTION_NUM];
 
 //
 
-
+bool bDraw[XTION_NUM] = {false};
 int thresholdNear[XTION_NUM];//2
 int thresholdFar[XTION_NUM];//3
 
@@ -40,6 +41,9 @@ bool bCaptureBg[XTION_NUM] = {false};
 bool bSaveBgAsImage[XTION_NUM] = {false};
 float depthBgAverage[XTION_NUM] = {0};
 int realDepthMax[XTION_NUM] = {0};
+
+//ofPoint depthCheckPoint[XTION_NUM] = {0};///
+//unsigned short depthValue[XTION_NUM] = {0};///
 
 float pointSize = 4.0;//9
 int step = 2;//10
@@ -207,6 +211,7 @@ void uiWindow::setup(){
         if ( i == 0 || i == 3 ) gui.addPage();
         if(i > 0) gui.addTitle("Xtion No." + ofToString(i + 1)).setNewColumn(true);
         else gui.addTitle("Xtion No." + ofToString(i + 1));
+        gui.addToggle("bDraw", bDraw[i]);
         gui.addContent("depth_map" + ofToString(i+1), tex[i]);
         gui.addRangeSlider("thresholds:near_far"+ ofToString(i+1), thresholdNear[i], thresholdFar[i], 0, 10000);
         gui.addSlider("scale", scale[i], 0.001f, 5.0f);
@@ -216,7 +221,7 @@ void uiWindow::setup(){
         gui.addSlider("axis.x", axis[i].x, -4000.0f, 4000.0f);
         gui.addSlider("axis.y", axis[i].y, -4000.0f, 4000.0f);
         gui.addSlider("axis.z", axis[i].z, -10000.0f, 0.0f);
-        gui.addSlider("rotx", rotx[i], -180, 180).setNewColumn(true);
+        gui.addSlider("rotx", rotx[i], -180, 180);
         gui.addSlider("roty", roty[i], -180, 180);
         gui.addSlider("rotz", rotz[i], -180, 180);
         gui.addTitle("bgCapture");
@@ -228,9 +233,11 @@ void uiWindow::setup(){
         gui.addSlider("capturePlay", bgCapturePlay[i], 0, 200);
         gui.addValueMonitor("realDepthMAX", realDepthMax[i]);
         gui.addValueMonitor("depthBgAverage", depthBgAverage[i]);
-        
+        gui.addValueMonitor("monitor", realDepthMax[i]).setNewColumn(true);
     }
-    gui.setPage(1);
+    gui.addPage("test");
+    gui.addContentSlider2d("test", 1, tex[0], maguchi[0], 0.0f, 100.0f, 0.0f, 100.0f);
+    gui.setPage(0);
     
     myLoadFromXml();
 }

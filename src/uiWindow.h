@@ -12,6 +12,7 @@
 #include "ofxFensterManager.h"
 #include "ofxSimpleGuiToo.h"
 #include "myXtionOperator.h"
+#include "ofxOpenCv.h"
 
 #define OFXMSAGUI_DONT_USE_XML
 

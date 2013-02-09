@@ -17,6 +17,9 @@ public:
 	float	comboBoxHeight;
 	float	comboBoxTextHeight;
     float   colorPickerTextHeight;
+    float   contentTextHeight;
+    
+    char monitorSlider2dAlpha;
     
     float   lockButtonWidth;
     float   lockButtonHeight;

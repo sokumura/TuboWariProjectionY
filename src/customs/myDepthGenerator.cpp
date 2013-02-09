@@ -17,10 +17,11 @@ myDepthGenerator::myDepthGenerator(){
 
 myDepthGenerator::~myDepthGenerator(){
 
-    
 }
 //----------------------------------------------
 bool myDepthGenerator::setup(xn::NodeInfo const& node, int num){
+    if ( thisNum == 0) bDraw[thisNum] = true;
+    
     depthMAX = 8000;
     depthMIN = 0;
     
@@ -89,16 +90,17 @@ void myDepthGenerator::checkSwitchMethods(){
 }
 //----------------------------------------------
 void myDepthGenerator::draw(){
-    ofPushMatrix();
-    ofTranslate(axis[thisNum].x, axis[thisNum].y, axis[thisNum].z);
-    ofRotateX(rotx[thisNum]);
-    ofRotateY(roty[thisNum]);
-    ofRotateZ(rotz[thisNum]);
-    glPointSize(pointSize);
-    ofScale(scale[thisNum], scale[thisNum] * 1 / aspect[thisNum], scaleZ[thisNum]);
-    vboMesh.draw();
-    ofPopMatrix();
-
+    if (bDraw[thisNum]) {
+        ofPushMatrix();
+        ofTranslate(axis[thisNum].x, axis[thisNum].y, axis[thisNum].z);
+        ofRotateX(rotx[thisNum]);
+        ofRotateY(roty[thisNum]);
+        ofRotateZ(rotz[thisNum]);
+        glPointSize(pointSize);
+        ofScale(scale[thisNum], scale[thisNum] * 1 / aspect[thisNum], scaleZ[thisNum]);
+        vboMesh.draw();
+        ofPopMatrix();
+    }
 }
 //----------------------------------------------
 //----------------------------------------------
@@ -211,6 +213,9 @@ void myDepthGenerator::planeBgCapthre(){//1回のデータを蓄積する
     const XnDepthPixel * bg = dmd.Data();
     for (int i = 0; i < TOTAL_PIXEL; i++) {
         bgDepth[i] = bg[i];
+        if (bg[i] == 0 ) {
+            bgDepth[i] = depthMAX;
+        }
         depthBgAverage[thisNum] += bg[i];
         if (bg[i] == 0) {
             unCount++;
