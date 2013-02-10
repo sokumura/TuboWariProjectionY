@@ -136,7 +136,10 @@ void ofxSimpleGuiContentSlider2d::draw(float x, float y) {
     ofRect(0, 0, width, sliderTextHeight);
     
     setTextColor(!isFixed());
-    ofDrawBitmapString(name+"\nx:"+ofToString(value->x, 2)+"\ny:"+ofToString(value->y, 2), 6, 15);
+    char vs[36];
+    std::sprintf(vs, "\nx:%.2f\ny:%.2f", value->x,value->y);
+    
+    ofDrawBitmapString(name + vs , 6, 15);
     //////////
 //    ofSetColor(0, 0, 0,0);
 //    setContent2DSliderBGColor(!isFixed());
@@ -151,7 +154,7 @@ void ofxSimpleGuiContentSlider2d::draw(float x, float y) {
     
         ofRectangle maxxB = base64GetStringBoundingBox("X:" + ofToString(max.x));
         char valueString[36];
-        std::sprintf(valueString,"( %.1f , %.1f )",(*value).x, (*value).y);
+        std::sprintf(valueString,"( %.2f , %.2f )",(*value).x, (*value).y);
         ofRectangle valueStringBox = base64GetStringBoundingBox(valueString);
         base64DrawBitmapString("(" + ofToString(min.x) + "," + ofToString(min.y) + ")", 1, 2);
         base64DrawBitmapString("X:" + ofToString(max.x), width - maxxB.width - 1, 2);

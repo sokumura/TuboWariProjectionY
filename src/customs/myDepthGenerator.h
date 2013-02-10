@@ -40,9 +40,12 @@ extern float rotz[XTION_NUM];//7
 extern ofVec3f axis[XTION_NUM];//8
 extern bool bCaptureBg[XTION_NUM];
 extern bool bSaveBgAsImage[XTION_NUM];
-extern float depthBgAverage[XTION_NUM];
 extern int realDepthMax[XTION_NUM];
 extern bool trLoadBg[XTION_NUM];
+extern bool trGetPointDepth[XTION_NUM];///
+extern int realDepthMax[XTION_NUM];
+extern int depthPointValue[XTION_NUM];///
+extern ofPoint depthCheckPoint[XTION_NUM];
 
 extern float pointSize;
 extern int step;
@@ -84,6 +87,9 @@ public:
     };
     
     void console(bool bOut);
+    
+    unsigned short getPointDepth(int x, int y);
+    bool gettingPointDepth;
     
 private:
     myDepthGenerator(const myDepthGenerator& other);

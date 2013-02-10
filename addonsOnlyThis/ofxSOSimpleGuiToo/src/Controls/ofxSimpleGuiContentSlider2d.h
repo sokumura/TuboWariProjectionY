@@ -13,7 +13,7 @@
 class ofxSimpleGuiContentSlider2d : public ofxSimpleGuiControl {
 public:
 	ofPoint		*value;
-	ofPoint		point, min, max;
+	ofPoint		point, point2, min, max;
     ofBaseDraws * content;
     
     float			fixwidth;
@@ -37,4 +37,5 @@ public:
 private:
     float sliderHeight;
     float sliderTextHeight;
+   //bool bSecondPoint;
 };

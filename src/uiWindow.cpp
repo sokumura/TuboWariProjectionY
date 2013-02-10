@@ -39,11 +39,11 @@ bool bUseBgDepth[XTION_NUM] = {false};//4
 bool trLoadBg[XTION_NUM] = {false};
 bool bCaptureBg[XTION_NUM] = {false};
 bool bSaveBgAsImage[XTION_NUM] = {false};
-float depthBgAverage[XTION_NUM] = {0};
+bool trGetPointDepth[XTION_NUM] = {false};
 int realDepthMax[XTION_NUM] = {0};
 
-//ofPoint depthCheckPoint[XTION_NUM] = {0};///
-//unsigned short depthValue[XTION_NUM] = {0};///
+ofPoint depthCheckPoint[XTION_NUM] = {ofPoint(0.0f, 0.0f)};///
+int depthPointValue[XTION_NUM] = {0};///
 
 float pointSize = 4.0;//9
 int step = 2;//10
@@ -212,7 +212,10 @@ void uiWindow::setup(){
         if(i > 0) gui.addTitle("Xtion No." + ofToString(i + 1)).setNewColumn(true);
         else gui.addTitle("Xtion No." + ofToString(i + 1));
         gui.addToggle("bDraw", bDraw[i]);
-        gui.addContent("depth_map" + ofToString(i+1), tex[i]);
+        gui.addContentSlider2d("depth", 1, tex[i], depthCheckPoint[i], 0.0f, (float)CAPTURE_WIDTH, 0.0f, (float)CAPTURE_HEIGHT);
+        gui.addValueMonitor("depth_uint", depthPointValue[i]);
+        gui.addToggle("getPointDepth", trGetPointDepth[i]);
+        //gui.addContent("depth_map" + ofToString(i+1), tex[i]);
         gui.addRangeSlider("thresholds:near_far"+ ofToString(i+1), thresholdNear[i], thresholdFar[i], 0, 10000);
         gui.addSlider("scale", scale[i], 0.001f, 5.0f);
         gui.addSlider("aspect x/y", aspect[i], 0.5f, 2.0f);
@@ -232,7 +235,6 @@ void uiWindow::setup(){
         gui.addButton("bgFree()", trFreeBg[i]);
         gui.addSlider("capturePlay", bgCapturePlay[i], 0, 200);
         gui.addValueMonitor("realDepthMAX", realDepthMax[i]);
-        gui.addValueMonitor("depthBgAverage", depthBgAverage[i]);
         gui.addValueMonitor("monitor", realDepthMax[i]).setNewColumn(true);
     }
     gui.addPage("test");

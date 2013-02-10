@@ -13,6 +13,8 @@ myDepthGenerator::myDepthGenerator(){
     out_put_modes.nXRes = CAPTURE_WIDTH;
     out_put_modes.nYRes = CAPTURE_HEIGHT;
     out_put_modes.nFPS  = 30;
+    
+    gettingPointDepth = false;
 }
 
 myDepthGenerator::~myDepthGenerator(){
@@ -130,6 +132,17 @@ void  myDepthGenerator::generateCurrentDepth(){//不要なものを省いたdept
     }
 }
 
+unsigned short myDepthGenerator::getPointDepth(int x, int y){
+    const XnDepthPixel * depth = dmd.Data();
+    if (dmd.FrameID() == 0) return;
+    x = MAX(0, x);
+    y = MIN(CAPTURE_HEIGHT, y);
+    
+    unsigned short s = depth[y * CAPTURE_WIDTH + x];
+    
+    return s;
+}
+
 void myDepthGenerator::generateRealWorld( XnPoint3D * p3d){//3dにする
     vboMesh.clear();
     depthVecs.clear();
@@ -162,6 +175,9 @@ void myDepthGenerator::generateTexture() {//モニター用
     const XnDepthPixel * depth = dmd.Data();
     float max = 255;
     int i = 0;
+    if (trGetPointDepth[thisNum]) {
+        depthPointValue[thisNum] = (int)getPointDepth((int)depthCheckPoint[thisNum].x, (int)depthCheckPoint[thisNum].y);
+    }
     for (XnUInt16 y = 0; y < dmd.YRes(); y++) {
         unsigned char * texture = monitor_texture + y * dmd.XRes() * 4;
 		for (XnUInt16 x = 0; x < dmd.XRes(); x++, i++, depth++, texture += 4) {
@@ -216,12 +232,7 @@ void myDepthGenerator::planeBgCapthre(){//1回のデータを蓄積する
         if (bg[i] == 0 ) {
             bgDepth[i] = depthMAX;
         }
-        depthBgAverage[thisNum] += bg[i];
-        if (bg[i] == 0) {
-            unCount++;
-        }
     }
-    depthBgAverage[thisNum] /= TOTAL_PIXEL - unCount;
 }
 //-------------------------------------------------
 void myDepthGenerator::freeBgDepth(){
