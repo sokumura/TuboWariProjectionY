@@ -40,9 +40,10 @@ bool myDepthGenerator::setup(xn::NodeInfo const& node, int num){
     
     for (int i = 0; i < TOTAL_PIXEL; i++) {
         bgDepth[i] = depthMAX;
-        captureBgCountByPix[i] = 0;
+        bgDepthChar[i] = 0;
     }
     bgImg.allocate(CAPTURE_WIDTH, CAPTURE_HEIGHT, OF_IMAGE_GRAYSCALE);
+    depthBgPixel.allocate(CAPTURE_WIDTH, CAPTURE_HEIGHT, 1);
     loadBgImage();
     vboMesh.setMode(OF_PRIMITIVE_POINTS);
     vboMesh.disableNormals();
@@ -67,6 +68,7 @@ bool myDepthGenerator::update(){
         generateCurrentDepth();
         generateTexture();
         generateRealWorld(realWorld);
+        
         isNewDataAvailable = true;
     }
     
@@ -78,7 +80,7 @@ bool myDepthGenerator::update(){
 //-------------------------------------------------
 void myDepthGenerator::checkSwitchMethods(){
     if (bCaptureBg[thisNum]) {
-        planeBgCapthre();
+        bgSet();
         bCaptureBg[thisNum] = false;
     }
     if (trLoadBg[thisNum]) {
@@ -182,15 +184,6 @@ void myDepthGenerator::generateTexture() {//モニター用
         unsigned char * texture = monitor_texture + y * dmd.XRes() * 4;
 		for (XnUInt16 x = 0; x < dmd.XRes(); x++, i++, depth++, texture += 4) {
             XnUInt8 a = (XnUInt8)(((*depth) / (1 - depthMAX / max)));
-            if (bUseBgDepth[thisNum] && bgDepth[i] - bgCapturePlay[thisNum] <= *depth) {
-                
-                texture[0] = a;
-                texture[1] = a;
-                texture[2] = a;
-                texture[3] = 10;
-                continue;
-            }
-            
             if (*depth > thresholdNear[thisNum] && *depth < thresholdFar[thisNum]) {
                 texture[0] = 255;
             } else texture[0] = a;
@@ -202,9 +195,23 @@ void myDepthGenerator::generateTexture() {//モニター用
                 texture[3] = 0;
             else
                 texture[3] = 255;
+            
+            if (bUseBgDepth[thisNum] && bgDepth[i] - bgCapturePlay[thisNum] <= *depth) {
+                
+                texture[0] = a;
+                texture[1] = a;
+                texture[2] = a;
+                texture[3] = 10;
+            }
+            
+            if (*depth < depthSlider[thisNum] + 10 && *depth > depthSlider[thisNum] - 10) {
+                texture[0] = 0;
+                texture[1] = 0;
+                texture[2] = 255;
+            }
         }
     }
-
+    
 }
 //----------------------------------------------
 bool myDepthGenerator::loadBgImage(){
@@ -224,22 +231,36 @@ void myDepthGenerator::saveBgImage(){
     bgImg.saveImage("depthCapture_no_" + ofToString(thisNum) + ".tiff");
 }
 //-------------------------------------------------
-void myDepthGenerator::planeBgCapthre(){//1回のデータを蓄積する
-    unsigned int unCount = 0;
-    const XnDepthPixel * bg = dmd.Data();
-    for (int i = 0; i < TOTAL_PIXEL; i++) {
-        bgDepth[i] = bg[i];
-        if (bg[i] == 0 ) {
-            bgDepth[i] = depthMAX;
+void myDepthGenerator::bgSet(){
+    int sPx, sPy, lPx, lPy = 0;
+    sPx = round(depthCheckPoint[thisNum].x);
+    sPy = round(depthCheckPoint[thisNum].y);
+    lPx = round(depthCheckPoint2[thisNum].x);
+    lPy = round(depthCheckPoint2[thisNum].y);
+    if (sPx > lPx) std::swap(sPx, lPx);
+    if (sPy > lPy) std::swap(sPy, lPy);
+    if (lPx > CAPTURE_WIDTH || sPx < 0) {
+        ofLog(OF_LOG_ERROR, "depth_genrator bgSet()のエラー");
+        return;
+    } else if (lPy > CAPTURE_HEIGHT || sPy < 0) {
+        ofLog(OF_LOG_ERROR, "depth_genrator bgSet()のエラー");
+        return;
+    }
+    for (int y = sPy; y <= lPy; y++) {
+        for (int x = sPx; x <= lPx; x++) {
+            bgDepth[y * CAPTURE_WIDTH + x] = depthSlider[thisNum];
+            printf("x: %u, y:%u, value: %u\n", x, y, bgDepth[y * CAPTURE_WIDTH + x]);
         }
     }
+    printf("/////////////////////\n////////////////////////\n");
+    
+    
+//    if (counter % 200 == 0) {
+//        printf("sPx : %u, sPy : %u\nlPx : %u, lPy : %u", sPx, sPy, lPx, lPy);
+//    }
+    
 }
 //-------------------------------------------------
-void myDepthGenerator::freeBgDepth(){
-    for (int i = 0; i < TOTAL_PIXEL; i++) {
-        bgDepth[i] = depthMAX;
-    }
-}
 
 const unsigned char * myDepthGenerator::getMonitorTexture() const{
     const unsigned char * pointer = monitor_texture;

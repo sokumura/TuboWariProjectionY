@@ -37,6 +37,7 @@ public:
     ofxXmlSettings xml;
     
     void addMappingSetup();
+    ofTexture screenTex;
     
     bool trDrawGlobalMap = false;
     

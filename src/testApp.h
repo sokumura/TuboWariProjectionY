@@ -22,7 +22,7 @@ public:
     void mappingDraw();
     
     //xtion
-    ofFbo xtionFbo;
+    
     ofPixels pix;
     ofTexture tex;
     ofxCvColorImage cImg;

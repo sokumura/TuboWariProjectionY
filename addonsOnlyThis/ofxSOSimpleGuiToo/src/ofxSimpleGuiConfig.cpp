@@ -30,13 +30,16 @@ ofxSimpleGuiConfig::ofxSimpleGuiConfig() {
 	padding.set			(defaultHeight/4, 8);
 	offset.set			(defaultHeight/4, defaultHeight/4);
 	//slider2DSize.set	(defaultHeight * 4, defaultHeight * 4);
+    secBtnPos.set(width / 2, 0.0f);
     
 	gridSize.x			= width + padding.x;
 	gridSize.y			= toggleHeight + padding.y;
 
 	
 	textColor			= 0x000000;
+    textColor2          = 0x002000;
 	textOverColor		= 0xe8e8e8;
+    textOverColor2      = 0xffff00;
 	textBGColor			= 0xe6e6e6;
 	textBGOverColor		= 0x545454;
 	

@@ -15,6 +15,7 @@
 #include "ofxSimpleGuiBlank.h"
 #include "ofxSimpleGuiSlider2d.h"
 #include "ofxSimpleGuiContentSlider2d.h"
+#include "ofxSimpleGuiMulti2dSlider.h"
 
 #include "rangeSliderInt.h"
 #include "rangeSliderFloat.h"

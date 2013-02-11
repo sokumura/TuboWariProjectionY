@@ -27,6 +27,7 @@ public:
 	ofxSimpleGuiControl& setNewColumn(bool b);
 
 	ofxSimpleGuiControl& setTextColor(bool clickable = true);
+    ofxSimpleGuiControl& setTextColor2(bool clickable = true);
 	ofxSimpleGuiControl& setTextBGColor(bool clickable = true);
 	ofxSimpleGuiControl& setFullColor(bool forceActive = false);
 	ofxSimpleGuiControl& setEmptyColor();

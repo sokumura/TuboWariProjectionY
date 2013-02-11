@@ -46,6 +46,8 @@ extern bool trGetPointDepth[XTION_NUM];///
 extern int realDepthMax[XTION_NUM];
 extern int depthPointValue[XTION_NUM];///
 extern ofPoint depthCheckPoint[XTION_NUM];
+extern ofPoint depthCheckPoint2[XTION_NUM];
+extern int depthSlider[XTION_NUM];
 
 extern float pointSize;
 extern int step;
@@ -65,7 +67,6 @@ public:
     
     
     //背景のキャプチャ系
-    void  freeBgDepth();
     void  generateTexture();
     void  generateCurrentDepth();
     
@@ -100,7 +101,7 @@ private:
     vector <ofVec3f> depthVecs;
     ofVboMesh vboMesh;
     
-    ofShortImage bgImg;
+    ofShortImage            bgImg;
     xn::DepthGenerator      depth_generator;
     xn::DepthMetaData       dmd;
     XnMapOutputMode         out_put_modes;
@@ -109,12 +110,14 @@ private:
     void saveBgImage();
     bool loadBgImage();
     
-    void planeBgCapthre();
+    void bgSet();
 
-    unsigned short bgDepth[TOTAL_PIXEL];//背景のキャプチャ
-    unsigned char captureBgCountByPix[TOTAL_PIXEL];
-    unsigned char monitor_texture[TOTAL_PIXEL *4];//全体を0~255にmapしたtex
+    unsigned short  bgDepth[TOTAL_PIXEL];//背景のキャプチャ
+    unsigned char   bgDepthChar[TOTAL_PIXEL];
+    unsigned char   captureBgCountByPix[TOTAL_PIXEL];
+    unsigned char   monitor_texture[TOTAL_PIXEL *4];//全体を0~255にmapしたtex
     XnDepthPixel currentDepth[TOTAL_PIXEL];//thresholdの中に入ったものだけにした生データ
+    ofPixels    depthBgPixel;
     
     XnDepthPixel depthMIN, depthMAX;//デプスのmin,maxをいれておく
     int thisNum;//このxtionの番号

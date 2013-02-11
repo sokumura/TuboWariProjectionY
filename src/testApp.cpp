@@ -1,10 +1,13 @@
 #include "testApp.h"
 
 ////GLOBAL////
+extern ofFbo screenFbo;
 //xtion
+extern ofFbo xtionFbo;
 extern myXtionOperator xtions;
 
 //mapping
+extern bool bMappingDraw;
 extern float lineWidth;
 extern ofPoint maguchi[4];
 extern ofPoint okuguchi[4];
@@ -43,6 +46,7 @@ void testApp::setup(){
     s.useDepth = false;
     s.depthStencilAsTexture = false;
     xtionFbo.allocate(s);
+    screenFbo.allocate(s);
     
     tex.allocate(1024, 768, GL_LUMINANCE);
     pix.allocate(1024, 768, 3);
@@ -58,6 +62,9 @@ void testApp::update(){
     xtionFbo.begin();
         ofClear(0,0,0,255);
     xtionFbo.end();
+    screenFbo.begin();
+        ofClear(0, 0, 0, 255);
+    screenFbo.end();
     
     xtions.update();
     
@@ -83,21 +90,21 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    
-    //xtions.testDraw();
-    mappingDraw();
-    
-    //img.draw(0.0f, 0.0f);
+    screenFbo.begin();
+    //Drawing point////////////////////////////////////
     ofSetColor(255);
-    //xtionFbo.draw(0.0f, 0.0f);
-    //tex.draw(0, 0);
-    //cfinder.draw();
-    gImg.draw(0.0f, 0.0f);
+    //gImg.draw(0.0f, 0.0f);
     cfinder.draw();
+    
+    
+    ///////////////////////////////////////////////////
+    screenFbo.end();
+    screenFbo.draw(0, 0);
+    mappingDraw();
 }
 
 void testApp::mappingDraw(){
-
+    if (!bMappingDraw) return;
     
     ofPushStyle();
     ofNoFill();

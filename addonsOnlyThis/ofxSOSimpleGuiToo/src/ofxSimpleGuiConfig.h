@@ -30,11 +30,14 @@ public:
 	ofPoint padding;
 	ofPoint offset;
 	ofPoint	slider2DSize;
+    ofPoint secBtnPos;
     
     int titleColor[5];
 
 	int	textColor;
 	int textOverColor;
+    int	textColor2;
+    int textOverColor2;
 	int textBGColor;
 	int textBGOverColor;
     int textOFFColor;

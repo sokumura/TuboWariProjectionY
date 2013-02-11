@@ -13,19 +13,22 @@
 class ofxSimpleGuiContentSlider2d : public ofxSimpleGuiControl {
 public:
 	ofPoint		*value;
+    ofPoint     *value2;
 	ofPoint		point, point2, min, max;
-    ofBaseDraws * content;
+    ofTexture * content;
     
     float			fixwidth;
 	float			fixheight;
+    float secondPointBoxWidth;
     
-	ofxSimpleGuiContentSlider2d(string name, int nBlock, ofBaseDraws & content, ofPoint& value, float xmin, float xmax, float ymin, float ymax);
+	ofxSimpleGuiContentSlider2d(string name, int nBlock, ofTexture & content, ofPoint& value, ofPoint& value2, float xmin, float xmax, float ymin, float ymax, bool bSecond = false);
 	void setup();
 #ifndef OFXMSAGUI_DONT_USE_XML
 	void loadFromXML(ofxXmlSettings &XML);
 	void saveToXML(ofxXmlSettings &XML);
 #endif
 	void setValue(float x, float y);
+    void setValue2(float x, float y);
 	void setMin(float x, float y);
 	void setMax(float x, float y);
 	void onPress(int x, int y, int button);
@@ -37,5 +40,6 @@ public:
 private:
     float sliderHeight;
     float sliderTextHeight;
-   //bool bSecondPoint;
+    bool bSecondPoint;
+    ofPoint secBtnPos;
 };

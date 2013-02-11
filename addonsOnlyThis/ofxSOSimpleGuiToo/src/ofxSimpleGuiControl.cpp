@@ -60,6 +60,12 @@ ofxSimpleGuiControl &ofxSimpleGuiControl::setTextColor(bool clickable) {
 	return *this;
 }
 
+ofxSimpleGuiControl &ofxSimpleGuiControl::setTextColor2(bool clickable) {
+	if(isMouseOver() && clickable) ofSetHexColor(config->textOverColor2);
+	else ofSetHexColor(config->textColor2);
+	return *this;
+}
+
 ofxSimpleGuiControl &ofxSimpleGuiControl::setTextBGColor(bool clickable) {
 	if(isMouseOver() && clickable) ofSetHexColor(config->textBGOverColor);
 	else ofSetHexColor(config->textBGColor);

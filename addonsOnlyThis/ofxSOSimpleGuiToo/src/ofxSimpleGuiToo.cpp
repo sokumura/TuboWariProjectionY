@@ -319,8 +319,8 @@ ofxSimpleGuiSlider2d &ofxSimpleGuiToo::addSlider2d(string name, ofPoint& value, 
 	return pages[currentPageIndex]->addSlider2d(name, value, xmin, xmax, ymin, ymax);
 }
 
-ofxSimpleGuiContentSlider2d &ofxSimpleGuiToo::addContentSlider2d(string name, int nBlock, ofBaseDraws & content, ofPoint& value, float xmin, float xmax, float ymin, float ymax){
-    return pages[currentPageIndex]->addContentSlider2d(name, nBlock, content, value, xmin, xmax, ymin, ymax);
+ofxSimpleGuiContentSlider2d &ofxSimpleGuiToo::addContentSlider2d(string name, int nBlock, ofTexture & content, ofPoint& value, ofPoint& value2, float xmin, float xmax, float ymin, float ymax, bool bSecond){
+    return pages[currentPageIndex]->addContentSlider2d(name, nBlock, content, value, value2, xmin, xmax, ymin, ymax, bSecond);
 }
 
 ofxSimpleGuiTitle &ofxSimpleGuiToo::addTitle(string name, float height) {
