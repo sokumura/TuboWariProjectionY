@@ -34,11 +34,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/uiWindow.h"
-         timestampString = "382337395.090008"
+         timestampString = "382392617.023042"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "48"
-         endingLineNumber = "48"
+         startingLineNumber = "45"
+         endingLineNumber = "45"
          landmarkName = "class uiWindow"
          landmarkType = "3">
       </FileBreakpoint>
@@ -54,6 +54,17 @@
          endingLineNumber = "185"
          landmarkName = "myDepthGenerator::generateTexture()"
          landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/uiWindow.cpp"
+         timestampString = "382392370.17817"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "71"
+         endingLineNumber = "71">
       </FileBreakpoint>
    </FileBreakpoints>
 </Bucket>

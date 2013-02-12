@@ -9,10 +9,13 @@
 #include "ofxSimpleGuiMulti2dSlider.h"
 
 
-ofxSimpleGuiMulti2dSlider::ofxSimpleGuiMulti2dSlider(string name, int nBlock, int pointNum, ofPoint * values, float xmin, float xmax, float ymin, float ymax, float sliderAspectWbyH, bool bBgTransparent) : ofxSimpleGuiControl(name) {
+ofxSimpleGuiMulti2dSlider::ofxSimpleGuiMulti2dSlider(string name, int nBlock, int pointNum, ofPoint * values, float _xmin, float _xmax, float _ymin, float _ymax, float sliderAspectWbyH, bool bBgTransparent, float _offsetScale) : ofxSimpleGuiControl(name) {
 
     pValues = values;
-    
+    if (offsetScale > 1.0f) {
+        ofLogError("ofxSimpleGuiMulti2dSlider : offsetScale's value is error!!\n");
+    }
+    this->offsetScale = _offsetScale;
 	this->width = nBlock * config->width + (nBlock - 1) * config->padding.x;
     sliderHeight = width * 3.0f / 4.0f;
     sliderTextHeight = config->slider2DTextHeight;
@@ -20,23 +23,31 @@ ofxSimpleGuiMulti2dSlider::ofxSimpleGuiMulti2dSlider(string name, int nBlock, in
     bBgTrans = bBgTransparent;
     aspect = sliderAspectWbyH;
 
-    for (int i = 0; i < POINT_NUM_LIMIT; i++) {
-        pSliderPoint[i] = ofPoint(width/2, sliderHeight / 2);
-    }
+//    for (int i = 0; i < POINT_NUM_LIMIT; i++) {
+//        pSliderPoint[i] = ofPoint(width/2, sliderHeight / 2);
+//    }
     
 	setSize(width, sliderHeight + sliderTextHeight);
     nPointNum = pointNum;
+    mainMin.set(_xmin, _ymin);
+    mainMax.set(_xmax, _ymax);
     
-    if (xmin > xmax) std::swap(xmin, xmax);
-    if (ymin > ymax) std::swap(ymin, ymax);
-	min.set(xmin, ymin);
-	max.set(xmax, ymax);
+    if (_xmin > _xmax) std::swap(_xmin, _xmax);
+    if (_ymin > _ymax) std::swap(_ymin, _ymax);
+    float offsetX = ((_xmax - _xmin) - (_xmax - _xmin) * offsetScale) / 2.0f;
+    float offsetY = ((_ymax - _ymin) - (_ymax - _ymin) * offsetScale) / 2.0f;
+	min.set(_xmin - offsetX, _ymin - offsetY);
+	max.set(_xmax + offsetX, _ymax + offsetY);
+    ofPoint p1;
+    p1.set(ofMap(_xmin, min.x, max.x, 0.0f, width), ofMap(_ymin, min.y, max.y, sliderTextHeight, sliderTextHeight + sliderHeight));
+    ofPoint p2;
+    p2.set(ofMap(_xmax, min.x, max.x, 0.0f, width), ofMap(_ymax, min.y, max.y, sliderTextHeight, sliderTextHeight + sliderHeight));
+    insideRect.set(p1, p2);
     
     for (int i = 0; i < nPointNum; i++) {
         pValues[i].x = ofClamp(pValues[i].x, min.x, max.x);
         pValues[i].y = ofClamp(pValues[i].y, min.y, max.y);
     }
-    
     if (nBlock == 0) {
         ofLog(OF_LOG_ERROR, "ofxSimpleGuiMulti2dSlider で nBlockに0が入っている。1以上にすべし。\n");
     }
@@ -131,10 +142,18 @@ void ofxSimpleGuiMulti2dSlider::draw(float x, float y) {
 	glTranslatef(this->x, this->y, 0);
     
     ofFill();
-    glColor4f(1.0f, 0, 0, 0);//黒 - 背景
+    if (bBgTrans) glColor4f(1.0f, 0, 0, 0);//黒 - 背景
+    else {
+        ofSetColor(255, 0, 0,255);
+        set2DSliderBGColor();
+    }
     ofRect(0, sliderTextHeight, width, sliderHeight);
-	
-    
+	if (offsetScale < 1.0f) {
+        ofNoFill();
+        ofSetColor(255, 255, 255, 255);
+        ofRect(insideRect);
+    }
+    ofFill();
     ofSetColor(255, 255, 255, 255);
     setTextBGColor(!isFixed());
     ofRect(0, 0, width, sliderTextHeight);
@@ -159,25 +178,18 @@ void ofxSimpleGuiMulti2dSlider::draw(float x, float y) {
                 ofLine(0, pSliderPoint[i].y,width, pSliderPoint[i].y);
             } 
         }
-        ofCircle(pSliderPoint[i].x, pSliderPoint[i].y, 3);
+        ofCircle(pSliderPoint[i].x, pSliderPoint[i].y, 5);
         ofSetHexColor(0xffffff);
-        ofRectangle maxxB = base64GetStringBoundingBox("X:" + ofToString(max.x));
-        string valueString = "(" + ofToString(pValues[i].x) + "," + ofToString(pValues[i].y) + ")";
-        ofRectangle valueStringBox = base64GetStringBoundingBox(ofToString(i));
+        ofRectangle maxxB = base64GetStringBoundingBox("X:" + ofToString(mainMax.x));
+//        string valueString = "(" + ofToString(pValues[i].x) + "," + ofToString(pValues[i].y) + ")";
+//        ofRectangle valueStringBox = base64GetStringBoundingBox(ofToString(i));
         
-        base64DrawBitmapString("(" + ofToString(min.x) + "," + ofToString(min.y) + ")", 1, 2);
-        base64DrawBitmapString("X:" + ofToString(max.x), width - maxxB.width - 1, 2);
-        base64DrawBitmapString("Y:" + ofToString(max.y), 1, sliderHeight - maxxB.height -1);
+        base64DrawBitmapString("(" + ofToString(mainMin.x) + "," + ofToString(mainMin.y) + ")", 1, 2);
+        base64DrawBitmapString("X:" + ofToString(mainMax.x), width - maxxB.width - 1, 2);
+        base64DrawBitmapString("Y:" + ofToString(mainMax.y), 1, sliderHeight - maxxB.height -1);
+        
         ofSetHexColor(config->pointsColor[i]);
-        if (width/2 > pSliderPoint[i].x && sliderHeight/2 > (pSliderPoint[i].y - y)){
-            base64DrawBitmapString(ofToString(i), pSliderPoint[i].x + 3, pSliderPoint[i].y + 3);
-        } else if (width/2 < pSliderPoint[i].x && sliderHeight/2 > pSliderPoint[i].y) {//
-            base64DrawBitmapString(ofToString(i), pSliderPoint[i].x - valueStringBox.width - 3, pSliderPoint[i].y + 3);
-        } else if (width/2 > pSliderPoint[i].x && sliderHeight/2 < pSliderPoint[i].y) {//
-            base64DrawBitmapString(ofToString(i), pSliderPoint[i].x + 3, pSliderPoint[i].y - valueStringBox.height - 3);
-        } else {//
-            base64DrawBitmapString(ofToString(i), pSliderPoint[i].x - valueStringBox.width - 3, pSliderPoint[i].y - valueStringBox.height - 3);
-        }
+        ofDrawBitmapString(ofToString(i), ofPoint(pSliderPoint[i]) - ofPoint(10.0f, 6.0f));
     }
     
     ofTranslate(0, (int)(-1)*(sliderTextHeight) + 2);

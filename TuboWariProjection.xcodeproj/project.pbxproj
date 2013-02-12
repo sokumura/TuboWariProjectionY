@@ -397,6 +397,7 @@
 		100BD0E616344BCA00676683 /* myDepthGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myDepthGenerator.h; sourceTree = "<group>"; };
 		100BD0E716344D4700676683 /* myDepthGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = myDepthGenerator.cpp; sourceTree = "<group>"; };
 		100BD0E916346D5900676683 /* myXtionOperator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = myXtionOperator.cpp; sourceTree = "<group>"; };
+		10465C0716CA7F9D00481D6D /* MACROS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MACROS.h; sourceTree = "<group>"; };
 		10B663F716B3B40600C250A4 /* uiWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = uiWindow.cpp; sourceTree = "<group>"; };
 		10B663F816B3B40600C250A4 /* uiWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uiWindow.h; sourceTree = "<group>"; };
 		10D78EDD16C8E8AC005D48BB /* ofxSimpleGuiMulti2dSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = ofxSimpleGuiMulti2dSlider.cpp; path = src/Controls/ofxSimpleGuiMulti2dSlider.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -938,6 +939,7 @@
 				100BD0E916346D5900676683 /* myXtionOperator.cpp */,
 				100BCFCA1633F99D00676683 /* myXtionOperator.h */,
 				100BCFCB1633F99D00676683 /* ofxOpenNIHeaders.h */,
+				10465C0716CA7F9D00481D6D /* MACROS.h */,
 			);
 			path = customs;
 			sourceTree = "<group>";

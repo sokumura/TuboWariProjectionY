@@ -323,8 +323,8 @@ ofxSimpleGuiContentSlider2d &ofxSimpleGuiToo::addContentSlider2d(string name, in
     return pages[currentPageIndex]->addContentSlider2d(name, nBlock, content, value, value2, xmin, xmax, ymin, ymax, bSecond);
 }
 
-ofxSimpleGuiMulti2dSlider &ofxSimpleGuiToo::addMulti2dSlider(string name, int nBlock, int pointNum, ofPoint * values, float xmin, float xmax, float ymin, float ymax, float sliderAspectWbyH, bool bBgTransparent){
-    return pages[currentPageIndex]->addMulti2dSlider(name, nBlock, pointNum, values, xmin, xmax, ymin, ymax, sliderAspectWbyH, bBgTransparent);
+ofxSimpleGuiMulti2dSlider &ofxSimpleGuiToo::addMulti2dSlider(string name, int nBlock, int pointNum, ofPoint * values, float xmin, float xmax, float ymin, float ymax, float sliderAspectWbyH, bool bBgTransparent, float offsetScale){
+    return pages[currentPageIndex]->addMulti2dSlider(name, nBlock, pointNum, values, xmin, xmax, ymin, ymax, sliderAspectWbyH, bBgTransparent, offsetScale);
 }
 
 ofxSimpleGuiTitle &ofxSimpleGuiToo::addTitle(string name, float height) {

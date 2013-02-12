@@ -11,8 +11,9 @@
 //////////////////
 //////GLOBAL//////
 ofFbo screenFbo;
-ofPoint point1 = ofPoint((float)MONITOR_SIZE_W / 2, (float)MONITOR_SIZE_H);
-ofPoint point2 = ofPoint((float)MONITOR_SIZE_W / 2, (float)MONITOR_SIZE_H);
+ofFbo monitorFbo;
+ofPoint point1 = ofPoint((float)PROJECTION_SIZE_W / 2, (float)PROJECTION_SIZE_H);
+ofPoint point2 = ofPoint((float)PROJECTION_SIZE_W / 2, (float)PROJECTION_SIZE_H);
 //xtions
 ofFbo xtionFbo;
 myXtionOperator xtions;
@@ -67,13 +68,18 @@ bool bUseApproximation = true;//15
 
 //point of mapping
 bool bMappingDraw = false;
-ofPoint maguchi[4] = { ofVec3f(0.0f,0.0f), ofVec3f(MONITOR_SIZE_W,0.0f), ofVec3f(MONITOR_SIZE_W, MONITOR_SIZE_H), ofVec3f(0.0f, MONITOR_SIZE_H) };//間口
-ofPoint okuguchi[4] = { ofVec3f(100.0f,100.0f), ofVec3f(MONITOR_SIZE_W - 100.0f,100.0f), ofVec3f(MONITOR_SIZE_W - 100.0f, MONITOR_SIZE_H - 100.0f), ofVec3f(100.0f, MONITOR_SIZE_H - 100.0f) };//奥口
+ofPoint maguchi[4] = { ofVec3f(0.0f,0.0f), ofVec3f(PROJECTION_SIZE_W,0.0f), ofVec3f(PROJECTION_SIZE_W, PROJECTION_SIZE_H), ofVec3f(0.0f, PROJECTION_SIZE_H) };//間口
+ofPoint okuguchi[4] = { ofVec3f(194.0f,145.0f), ofVec3f(1082.0f,172.0f), ofVec3f(1063, 675.0f), ofVec3f(213.0f, 687.0f) };//奥口
+ofPoint maguchiAll = ofPoint();
+ofPoint okuguchiAll = ofPoint();
+ofPoint exMaguchiAll = ofPoint();
+ofPoint exOkuguchiAll = ofPoint();
+
 
 float lineWidth = 2.0f;
 bool bFilled[5] = { false, false, false, false, false };
 
-ofPoint targetPointA = ofVec3f(MONITOR_SIZE_W / 2, MONITOR_SIZE_H / 2);
+ofPoint targetPointA = ofVec3f(PROJECTION_SIZE_W / 2, PROJECTION_SIZE_H / 2);
 bool bDoorDraw = false;
 ofPoint doorPos[5] = {ofPoint(954.0f, 551.0f),
                         ofPoint(1024.0f, 577.0f),
@@ -84,6 +90,15 @@ ofPoint himawariPos = ofVec3f(50, 300);
 
 
 void uiWindow::consoleOut(){
+    printf("-------------global console-----------\n");
+    for (int i = 0; i < 4; i++) {
+        printf("maguchi[%u] x:%.2f, y:%.2f, z:%.2f\n", i, maguchi[i].x, maguchi[i].y, maguchi[i].z);
+    }
+    for (int i = 0; i < 4; i++) {
+        printf("okuguchi[%u] x:%.2f, y:%.2f, z:%.2f\n", i, okuguchi[i].x, okuguchi[i].y, maguchi[i].z);
+    }
+    
+    printf("-------------//global console-----------\n");
     std::cout <<
     "///////////////consoleOut///////////////\n" <<
     "DoorPos : " << doorPos << "\n" <<
@@ -180,7 +195,7 @@ void uiWindow::setup(){
         gui.addValueMonitor("realDepthMAX", realDepthMax[i]);
     }
     gui.addPage("test");
-    gui.addMulti2dSlider("test", 3, 4, testPoint, 0.0f, 1024.0f, 0.0f, 768.0f, 4.0f / 3.0f, true);
+    gui.addMulti2dSlider("test", 4, 4, testPoint, 0.0f, (float)PROJECTION_SIZE_W, 0.0f, (float)PROJECTION_SIZE_H, 4.0f / 3.0f, true, 0.6f);
     gui.setPage(5);
     
     myLoadFromXml();
@@ -204,20 +219,38 @@ void uiWindow::update(){
         doLoad = false;
         printf("myLoadFromXml() was called.\n");
     }
+    if (maguchiAll.x != exMaguchiAll.x || maguchiAll.y != exMaguchiAll.y) {
+        for (int i = 0; i < 4; i++) {
+            maguchi[i].x += (maguchiAll.x - exMaguchiAll.x);
+            maguchi[i].y += (maguchiAll.y -exMaguchiAll.y);
+        }
+        exMaguchiAll = maguchiAll;
+    }
+    if (okuguchiAll.x != exOkuguchiAll.x || okuguchiAll.y != exOkuguchiAll.y) {
+        for (int i = 0; i < 4; i++) {
+            okuguchi[i].x += (okuguchiAll.x - exOkuguchiAll.x);
+            okuguchi[i].y += (okuguchiAll.y - exOkuguchiAll.y);
+        }
+        exOkuguchiAll = okuguchiAll;
+    }
+    
+    
 }
 void uiWindow::draw(){
     ofBackgroundGradient(ofColor::white, ofColor::gray);
-    screenFboDraw(5, 0, 3);
+    //
+    monitorFboDraw(5, 1, 1, 4, 0.713f);
     gui.draw();
     
 }
 
-void uiWindow::screenFboDraw(int page, int blockNo, int blockNumByWidth){
-    if (gui.getCurrentPageNo() != page) return;
+void uiWindow::monitorFboDraw(int pageFrom1, int controlNoFrom1,int blockNoFrom1, int blockNumByWidth, float scale){
+    if (gui.getCurrentPageNo() != pageFrom1) return;
     ofPushMatrix();
-    ofTranslate(gui.config->offset.x + gui.config->width * blockNo, gui.getPages()[1]->getControls()[0]->x + gui.config->sliderTextHeight + 100.0f);
+    ofTranslate(gui.config->offset.x + gui.config->width * (blockNoFrom1 - 1) ,
+                gui.getPages()[pageFrom1]->getControls()[controlNoFrom1 - 1]->y + gui.config->slider2DTextHeight);
     float ww = blockNumByWidth * gui.config->width + gui.config->padding.x * (blockNumByWidth - 1);
-    screenFbo.draw(0.0f, 0.0f, ww, ww * 3.0f / 4.0f);
+    monitorFbo.draw( ww * (1.0f - scale)/ 2.0f, ww * 3.0f / 4.0f * (1.0f - scale)/ 2.0f, ww * scale, ww * 3.0f / 4.0f * scale);
     ofPopMatrix();
 }
 
@@ -249,29 +282,31 @@ void uiWindow::addMappingSetup(){
     gui.addToggle("bMappingDraw", bMappingDraw);
     gui.addSlider2d("magu_t_l", maguchi[0], -50.0f, 210.0f, -50.0f, 210.0f);
     gui.addToggle("fill", bFilled[3]);
-    gui.addSlider2d("magu_b_l", maguchi[3], -50.0f, 210.0f, (float)MONITOR_SIZE_H - 210.0f, (float)MONITOR_SIZE_H + 50.0f);
+    gui.addSlider2d("magu_b_l", maguchi[3], -50.0f, 210.0f, (float)PROJECTION_SIZE_H - 210.0f, (float)PROJECTION_SIZE_H + 50.0f);
     //-----
     gui.addSlider("lineWidth", lineWidth, 0.0f, 10.0f).setNewColumn(true);
-    gui.addSlider2d("oku_t_l", okuguchi[0], 0.0f, MONITOR_SIZE_W / 2, 0.0f, MONITOR_SIZE_H /2 );
+    gui.addSlider2d("oku_t_l", okuguchi[0], 0.0f, PROJECTION_SIZE_W / 2, 0.0f, PROJECTION_SIZE_H /2 );
     gui.addToggle("fill", bFilled[4]);
-    gui.addSlider2d("oku_b_l", okuguchi[3], 0.0f, MONITOR_SIZE_W / 2, MONITOR_SIZE_H / 4, MONITOR_SIZE_H);
+    gui.addSlider2d("oku_b_l", okuguchi[3], 0.0f, PROJECTION_SIZE_W / 2, PROJECTION_SIZE_H / 4, PROJECTION_SIZE_H);
     //-----
     gui.addToggle("fill", bFilled[0]).setNewColumn(true);
-    gui.addSlider2d("oku_t_r", okuguchi[1], MONITOR_SIZE_W / 2, MONITOR_SIZE_W, 0.0f, MONITOR_SIZE_H / 2 );
-    gui.addSlider2d("oku_b_r", okuguchi[2], MONITOR_SIZE_W / 2, MONITOR_SIZE_W, MONITOR_SIZE_H / 4, MONITOR_SIZE_H);
+    gui.addSlider2d("oku_t_r", okuguchi[1], PROJECTION_SIZE_W / 2, PROJECTION_SIZE_W, 0.0f, PROJECTION_SIZE_H / 2 );
+    gui.addSlider2d("oku_b_r", okuguchi[2], PROJECTION_SIZE_W / 2, PROJECTION_SIZE_W, PROJECTION_SIZE_H / 4, PROJECTION_SIZE_H);
     gui.addToggle("fill", bFilled[2]);
     //------
-    gui.addSlider2d("magu_t_l", maguchi[1], MONITOR_SIZE_W - 210.0f, MONITOR_SIZE_W + 50.0f, -50.0f, 210.0f).setNewColumn(true);
+    gui.addSlider2d("magu_t_l", maguchi[1], PROJECTION_SIZE_W - 210.0f, PROJECTION_SIZE_W + 50.0f, -50.0f, 210.0f).setNewColumn(true);
     gui.addToggle("fill", bFilled[1]);
-    gui.addSlider2d("magu_b_l", maguchi[2], MONITOR_SIZE_W - 210.0f, MONITOR_SIZE_W + 50.0f, MONITOR_SIZE_H - 210.0f, MONITOR_SIZE_H + 50.0f);
+    gui.addSlider2d("magu_b_l", maguchi[2], PROJECTION_SIZE_W - 210.0f, PROJECTION_SIZE_W + 50.0f, PROJECTION_SIZE_H - 210.0f, PROJECTION_SIZE_H + 50.0f);
+    gui.addSlider2d("maguchiAll", maguchiAll, -500.0f, 500.0f, -500.0f, 500.0f).setNewColumn(true);
+    gui.addSlider2d("okuguchiAll", okuguchiAll, -500.0f, 500.0f, -500.0f, 500.0f);
     ///////////////////////////
     ///////////////////////////
     gui.addPage("mapping_set2");
     gui.addTitle("door's mapping");
-    gui.addSlider2d("t_l", doorPos[0], MONITOR_SIZE_W / 2, MONITOR_SIZE_W, MONITOR_SIZE_H / 2, MONITOR_SIZE_H);
+    gui.addSlider2d("t_l", doorPos[0], PROJECTION_SIZE_W / 2, PROJECTION_SIZE_W, PROJECTION_SIZE_H / 2, PROJECTION_SIZE_H);
     gui.addBlank();
     gui.addBlank();
-    gui.addSlider2d("b_l", doorPos[3], MONITOR_SIZE_W / 2, MONITOR_SIZE_W, MONITOR_SIZE_H / 2, MONITOR_SIZE_H);
+    gui.addSlider2d("b_l", doorPos[3], PROJECTION_SIZE_W / 2, PROJECTION_SIZE_W, PROJECTION_SIZE_H / 2, PROJECTION_SIZE_H);
     //------------
     gui.addBlank().setNewColumn(true);
     gui.addBlank();
@@ -280,13 +315,12 @@ void uiWindow::addMappingSetup(){
     gui.addBlank();
     gui.addBlank();
     gui.addToggle("doorDraw", bDoorDraw);
-    gui.addSlider2d("doorTarget", doorPos[4], MONITOR_SIZE_W / 2, MONITOR_SIZE_W, MONITOR_SIZE_H / 2, MONITOR_SIZE_H);
+    gui.addSlider2d("doorTarget", doorPos[4], PROJECTION_SIZE_W / 2, PROJECTION_SIZE_W, PROJECTION_SIZE_H / 2, PROJECTION_SIZE_H);
     //-------------
-    gui.addSlider2d("t_r", doorPos[1], MONITOR_SIZE_W / 2, MONITOR_SIZE_W, MONITOR_SIZE_H / 2, MONITOR_SIZE_H ).setNewColumn(true);
+    gui.addSlider2d("t_r", doorPos[1], PROJECTION_SIZE_W / 2, PROJECTION_SIZE_W, PROJECTION_SIZE_H / 2, PROJECTION_SIZE_H ).setNewColumn(true);
     gui.addBlank();
     gui.addBlank();
-    gui.addSlider2d("b_r", doorPos[2], MONITOR_SIZE_W / 2, MONITOR_SIZE_W, MONITOR_SIZE_H / 2, MONITOR_SIZE_H);
-    
+    gui.addSlider2d("b_r", doorPos[2], PROJECTION_SIZE_W / 2, PROJECTION_SIZE_W, PROJECTION_SIZE_H / 2, PROJECTION_SIZE_H);
     
     
 }

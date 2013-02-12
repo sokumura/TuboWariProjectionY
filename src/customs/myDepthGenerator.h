@@ -12,19 +12,12 @@
 
 #pragma once
 
+#include "MACROS.h"
 #include "ofxOpenNIHeaders.h"
 #include "XnCppWrapper.h"
 #include "ofMain.h"
 
-#define XTION_NUM       2
-#define CAPTURE_WIDTH   XN_QVGA_X_RES
-#define CAPTURE_HEIGHT  XN_QVGA_Y_RES
-#define TOTAL_PIXEL     CAPTURE_WIDTH * CAPTURE_HEIGHT
-#define PROJECTION_SIZE_W   1024
-#define PROJECTION_SIZE_H   768
 
-#define  USE_RECORED_DATA    false
-#define  DO_RECORED          true
 
 extern bool bDraw[XTION_NUM];
 extern int bgCapturePlay[XTION_NUM];

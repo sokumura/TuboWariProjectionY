@@ -89,7 +89,7 @@ void ofxSimpleGuiSlider2d::onDragOutside(int x, int y, int button) {
     lock = false;
 }
 
-void ofxSimpleGuiSlider2d::onRelease() {
+void ofxSimpleGuiSlider2d::onRelease(int x, int y, int button) {
     bool isOnFixButton = x - this->x > width - fixboxWidth && y - this->y < fixboxWidth && bDrawFixButton;
     if (isOnFixButton) {
         toggleFix();

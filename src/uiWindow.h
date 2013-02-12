@@ -14,10 +14,7 @@
 #include "myXtionOperator.h"
 #include "ofxOpenCv.h"
 
-#define OFXMSAGUI_DONT_USE_XML
 
-#define MONITOR_SIZE_W 1024
-#define MONITOR_SIZE_H 768
 
 class uiWindow : public ofxFensterListener {
 public:
@@ -43,6 +40,6 @@ public:
     ofPoint screenTexPoint;
     ofPoint screenTexWH;
 private:
-    void screenFboDraw(int page, int blockNo, int blockNumByWidth);
+    void monitorFboDraw(int pageFrom1, int controlNoFrom1,int blockNoFrom1, int blockNumByWidth, float scale);
     
 };

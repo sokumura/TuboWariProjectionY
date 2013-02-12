@@ -2,6 +2,8 @@
 
 ////GLOBAL////
 extern ofFbo screenFbo;
+extern ofFbo monitorFbo;
+extern ofPoint testPoint[4];
 //xtion
 extern ofFbo xtionFbo;
 extern myXtionOperator xtions;
@@ -33,25 +35,26 @@ void testApp::setup(){
 	ofxFenster * win = ofxFensterManager::get()->createFenster(0 , 0, 1280, 800, OF_WINDOW);
 	win -> addListener(new uiWindow());
     ui.setup();
-    ofxFensterManager::get()->getPrimaryWindow()->setWindowPosition(-1279, 182);
-    ofxFensterManager::get()->getPrimaryWindow()->toggleFullscreen();
+    ofxFensterManager::get()->getPrimaryWindow()->setWindowPosition(-1, 182);
+
 //--fenster
     
 //xtion--
     xtions.setup();
     ofFbo::Settings s = ofFbo::Settings();
-    s.width = 1024;
-    s.height = 768;
+    s.width = PROJECTION_SIZE_W;
+    s.height = PROJECTION_SIZE_H;
     s.internalformat = GL_RGB;
     s.useDepth = false;
     s.depthStencilAsTexture = false;
     xtionFbo.allocate(s);
     screenFbo.allocate(s);
+    monitorFbo.allocate(s);
     
-    tex.allocate(1024, 768, GL_LUMINANCE);
-    pix.allocate(1024, 768, 3);
-    cImg.allocate(1024, 768);
-    gImg.allocate(1024, 768);
+    tex.allocate(PROJECTION_SIZE_W, PROJECTION_SIZE_H, GL_LUMINANCE);
+    pix.allocate(PROJECTION_SIZE_W, PROJECTION_SIZE_H, 3);
+    cImg.allocate(PROJECTION_SIZE_W, PROJECTION_SIZE_H);
+    gImg.allocate(PROJECTION_SIZE_W, PROJECTION_SIZE_H);
     
 //--xtion
 }
@@ -65,6 +68,9 @@ void testApp::update(){
     screenFbo.begin();
         ofClear(0, 0, 0, 255);
     screenFbo.end();
+    monitorFbo.begin();
+    ofClear(0, 0, 0, 255);
+    monitorFbo.end();
     
     xtions.update();
     
@@ -90,17 +96,26 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+    monitorFbo.begin();
     screenFbo.begin();
     //Drawing point////////////////////////////////////
     ofSetColor(255);
     //gImg.draw(0.0f, 0.0f);
     cfinder.draw();
+    for (int i = 0; i < 4; i++) {
+        ofSetColor(ofColor::white);
+        ofCircle(testPoint[i], 20);
+    }
+    
     
     
     ///////////////////////////////////////////////////
     screenFbo.end();
     screenFbo.draw(0, 0);
     mappingDraw();
+    monitorFbo.end();
+    
+    screenFbo.draw(0,0);
 }
 
 void testApp::mappingDraw(){
@@ -195,6 +210,8 @@ void testApp::keyPressed(int key){
     } else if (key == 's') {
         xtions.startOniRecording(0);
         printf("recStop\n");
+    } else if (key == 'f'){
+            ofxFensterManager::get()->getPrimaryWindow()->toggleFullscreen();
     }
        
 }

@@ -15,9 +15,6 @@
 
 #include "myDepthGenerator.h"
 
-#define  RECORD_FILE_PATH  "../../skeletonrec.oni"
-
-
 
 class myXtionOperator {
 public:
