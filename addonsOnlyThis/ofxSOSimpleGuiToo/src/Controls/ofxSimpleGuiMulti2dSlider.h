@@ -8,13 +8,8 @@
 #pragma once
 #include "ofxSimpleGuiControl.h"
 
-
 class ofxSimpleGuiMulti2dSlider : public ofxSimpleGuiControl {
 public:
-	ofPoint * pValues;
-    ofPoint * pSliderPoint;
-	ofPoint	min, max;
-    float aspect;
     
 	ofxSimpleGuiMulti2dSlider(string name, int nBlock, int pointNum, ofPoint * values, float xmin, float xmax, float ymin, float ymax, float sliderAspectWbyH = 1.0f, bool bBgTransparent = false);
 	void setup();
@@ -24,7 +19,7 @@ public:
 	void onPress(int x, int y, int button);
 	void onDragOver(int x, int y, int button);
 	void onDragOutside(int x, int y, int button);
-	void onRelease();
+	void onRelease(int x, int y, int button);
 	void update();
 	void draw(float x, float y);
 private:
@@ -34,4 +29,8 @@ private:
     bool  bBgTrans;
     int nPointNum;
     int targetNo;
+    ofPoint * pValues;
+    ofPoint pSliderPoint[POINT_NUM_LIMIT];
+	ofPoint	min, max;
+    float aspect;
 };

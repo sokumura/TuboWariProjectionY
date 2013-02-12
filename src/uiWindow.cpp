@@ -48,6 +48,8 @@ bool bSaveBgAsImage[XTION_NUM] = {false};
 bool trGetPointDepth[XTION_NUM] = {false};
 int realDepthMax[XTION_NUM] = {0};
 
+ofPoint testPoint[4] = { ofPoint() };
+
 
 ofPoint depthCheckPoint[XTION_NUM] = {ofPoint(0.0f, 0.0f)};///
 ofPoint depthCheckPoint2[XTION_NUM] = {ofPoint((float)CAPTURE_WIDTH, (float)CAPTURE_HEIGHT)};
@@ -177,7 +179,9 @@ void uiWindow::setup(){
         gui.addSlider("capturePlay", bgCapturePlay[i], 0, 200);
         gui.addValueMonitor("realDepthMAX", realDepthMax[i]);
     }
-    gui.setPage(4);
+    gui.addPage("test");
+    gui.addMulti2dSlider("test", 3, 4, testPoint, 0.0f, 1024.0f, 0.0f, 768.0f, 4.0f / 3.0f, true);
+    gui.setPage(5);
     
     myLoadFromXml();
 }
@@ -203,8 +207,18 @@ void uiWindow::update(){
 }
 void uiWindow::draw(){
     ofBackgroundGradient(ofColor::white, ofColor::gray);
+    screenFboDraw(5, 0, 3);
     gui.draw();
-    //screenFbo.draw(0, 0, 500, 500 * 768 / 1024);
+    
+}
+
+void uiWindow::screenFboDraw(int page, int blockNo, int blockNumByWidth){
+    if (gui.getCurrentPageNo() != page) return;
+    ofPushMatrix();
+    ofTranslate(gui.config->offset.x + gui.config->width * blockNo, gui.getPages()[1]->getControls()[0]->x + gui.config->sliderTextHeight + 100.0f);
+    float ww = blockNumByWidth * gui.config->width + gui.config->padding.x * (blockNumByWidth - 1);
+    screenFbo.draw(0.0f, 0.0f, ww, ww * 3.0f / 4.0f);
+    ofPopMatrix();
 }
 
 void uiWindow::keyPressed(int key){

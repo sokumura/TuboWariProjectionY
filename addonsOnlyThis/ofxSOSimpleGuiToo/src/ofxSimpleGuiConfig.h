@@ -2,6 +2,7 @@
 
 #include "ofTypes.h"
 #include "ofPoint.h"
+#define POINT_NUM_LIMIT 10
 
 class ofxSimpleGuiConfig {
 public:
@@ -47,6 +48,8 @@ public:
 	int fullActiveColor;
 	int emptyColor;
 	int borderColor;
+    
+    int pointsColor[POINT_NUM_LIMIT];
 
 	ofxSimpleGuiConfig();
 };

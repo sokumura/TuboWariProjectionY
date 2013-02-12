@@ -40,5 +40,9 @@ public:
     ofTexture screenTex;
     
     bool trDrawGlobalMap = false;
+    ofPoint screenTexPoint;
+    ofPoint screenTexWH;
+private:
+    void screenFboDraw(int page, int blockNo, int blockNumByWidth);
     
 };

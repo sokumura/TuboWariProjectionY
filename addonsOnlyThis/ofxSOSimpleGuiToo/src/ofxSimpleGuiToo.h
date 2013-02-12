@@ -85,6 +85,9 @@ public:
 	ofxSimpleGuiPage&			page(int i);				// 1 based index of page
 	ofxSimpleGuiPage&			page(string name);			// returns page by name
 	ofxSimpleGuiPage&			currentPage();				// returns current page
+    int getCurrentPageNo() const {
+        return currentPageIndex;
+    };
 	vector <ofxSimpleGuiPage*>&	getPages();
 	
 	ofxSimpleGuiControl			&control(string name);		// returns control by name
@@ -105,7 +108,7 @@ public:
     rangeSliderFloat		&addRangeSlider(string name, float &_valueS, float &_valueL, float min, float max);
 	ofxSimpleGuiSlider2d		&addSlider2d(string name, ofPoint& value, float xmin, float xmax, float ymin, float ymax);
     ofxSimpleGuiContentSlider2d &addContentSlider2d(string name, int nBlock, ofTexture & content, ofPoint& value, ofPoint& value2, float xmin, float xmax, float ymin, float ymax, bool bSecond);
-    
+    ofxSimpleGuiMulti2dSlider &addMulti2dSlider(string name, int nBlock, int pointNum, ofPoint * values, float xmin, float xmax, float ymin, float ymax, float sliderAspectWbyH, bool bBgTransparent);
 	ofxSimpleGuiTitle			&addTitle(string name="", float height = 0);
 	ofxSimpleGuiToggle			&addToggle(string name, bool &value);
 	ofxSimpleGuiColorPicker		&addColorPicker(string name, ofFloatColor& color);
@@ -115,6 +118,9 @@ public:
 	
 	void						draw();
 	ofxSimpleGuiPage				*headerPage;//shuya:replaced from private
+
+    
+
 protected:
 	bool							doAutoSave;
 	bool							alignRight;
@@ -123,11 +129,11 @@ protected:
     bool                            doLoad;
 	bool							changePage;
 	int								forceHeight;
-	int								currentPageIndex;			// 1 based index of page (0 is for global controls)
+				// 1 based index of page (0 is for global controls)
 	
 	bool							doDraw;
 	float							border;
-	
+	int								currentPageIndex;
 	
 	ofxSimpleGuiButton				*titleButton;
 	vector <ofxSimpleGuiPage*>		pages;				// 0 is for headerPage

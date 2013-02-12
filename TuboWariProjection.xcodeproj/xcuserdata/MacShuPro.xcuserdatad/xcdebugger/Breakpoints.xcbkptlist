@@ -34,11 +34,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/uiWindow.h"
-         timestampString = "382265380.822936"
+         timestampString = "382337395.090008"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "44"
-         endingLineNumber = "44"
+         startingLineNumber = "48"
+         endingLineNumber = "48"
          landmarkName = "class uiWindow"
          landmarkType = "3">
       </FileBreakpoint>

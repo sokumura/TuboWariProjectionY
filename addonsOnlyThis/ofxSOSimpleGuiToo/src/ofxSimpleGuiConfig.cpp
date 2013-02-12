@@ -49,4 +49,16 @@ ofxSimpleGuiConfig::ofxSimpleGuiConfig() {
 	emptyColor			= 0x333333;
 	
 	borderColor			= 0x222222;
+    
+    pointsColor[0]      = 0xff0000;
+    pointsColor[1]      = 0x00ff00;
+    pointsColor[2]      = 0x0067ff;
+    pointsColor[3]      = 0xff8f00;
+    pointsColor[4]      = 0xff99c4;
+    pointsColor[5]      = 0xa100c5;
+    
+    for (int i = 6; i < POINT_NUM_LIMIT; i++) {
+        pointsColor[i]      = 0xffffff;
+    }
+    
 }

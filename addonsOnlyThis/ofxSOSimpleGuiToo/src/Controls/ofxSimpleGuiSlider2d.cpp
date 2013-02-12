@@ -69,22 +69,24 @@ void ofxSimpleGuiSlider2d::onPress(int x, int y, int button) {
 }
 
 void ofxSimpleGuiSlider2d::onDragOver(int x, int y, int button) {
-    bool isOnFixButton = x - this->x > width - fixboxWidth && y - this->y < fixboxWidth && bDrawFixButton;
-    if (isOnFixButton) {
-        toggleFix();
-    } else if (!isFixed()) {
+//    bool isOnFixButton = x - this->x > width - fixboxWidth && y - this->y < fixboxWidth && bDrawFixButton;
+//    if (isOnFixButton) {
+//        toggleFix();
+//    } else
+    if (!isFixed()) {
         if (lock) point.set(x - this->x, y - this->y - sliderTextHeight);
     }
 	
 }
 
 void ofxSimpleGuiSlider2d::onDragOutside(int x, int y, int button) {
-	bool isOnFixButton = x - this->x > width - fixboxWidth && y - this->y < fixboxWidth && bDrawFixButton;
-    if (isOnFixButton) {
-        toggleFix();
-    } else if (!isFixed()) {
-        if (lock) point.set(x - this->x, y - this->y - sliderTextHeight);
-    }
+//	bool isOnFixButton = x - this->x > width - fixboxWidth && y - this->y < fixboxWidth && bDrawFixButton;
+//    if (isOnFixButton) {
+//        toggleFix();
+//    } else if (!isFixed()) {
+//        if (lock) point.set(x - this->x, y - this->y - sliderTextHeight);
+//    }
+    lock = false;
 }
 
 void ofxSimpleGuiSlider2d::onRelease() {

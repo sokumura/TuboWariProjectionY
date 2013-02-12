@@ -112,13 +112,13 @@ void ofxSimpleGuiContentSlider2d::onDragOver(int x, int y, int button) {
 //        lock = false;
 //    }
 //    
-//    if (!isFixed()) {
-//        if (bSecondPoint) {
-//            if (lock) point2.set(x - this->x, y - this->y - sliderTextHeight);
-//        } else {
-//            if (lock) point.set(x - this->x, y - this->y - sliderTextHeight);
-//        }
-//    }
+    if (!isFixed()) {
+        if (bSecondPoint) {
+            if (lock) point2.set(x - this->x, y - this->y - sliderTextHeight);
+        } else {
+            if (lock) point.set(x - this->x, y - this->y - sliderTextHeight);
+        }
+    }
 	
 }
 

@@ -19,6 +19,8 @@ public:
 	bool		newColumn;
 	bool		hasTitle;
 	char		keyboardShortcut;
+    
+    ofxSimpleGuiConfig	*config;
 
 	ofxSimpleGuiControl(string name);
 	ofxSimpleGuiControl& setName(string newName);
@@ -76,7 +78,7 @@ public:
 	virtual void keyReleased( int key ){}
 	
 protected:
-	ofxSimpleGuiConfig	*config;
+	
     bool                bDrawFixButton;
     bool                fixed;
     float               fixboxWidth;
