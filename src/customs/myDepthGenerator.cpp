@@ -95,6 +95,7 @@ void myDepthGenerator::checkSwitchMethods(){
 //----------------------------------------------
 void myDepthGenerator::draw(){
     if (bDraw[thisNum]) {
+        ofPushStyle();
         ofPushMatrix();
         ofTranslate(axis[thisNum].x, axis[thisNum].y, axis[thisNum].z);
         ofRotateX(rotx[thisNum]);
@@ -104,6 +105,7 @@ void myDepthGenerator::draw(){
         ofScale(scale[thisNum], scale[thisNum] * 1 / aspect[thisNum], scaleZ[thisNum]);
         vboMesh.draw();
         ofPopMatrix();
+        ofPopStyle();
     }
 }
 //----------------------------------------------

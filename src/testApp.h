@@ -1,6 +1,7 @@
 #pragma once
 
 #include "uiWindow.h"
+#include "magicTest.h"
 
 class testApp : public ofBaseApp{
 
@@ -32,7 +33,22 @@ public:
     //fenster
     uiWindow ui;
     int counter;
-
+    
+    //magic
+    Goko1 goko1;
+    Keen keen1;
+    
+    //mask
+    ofShader maskShader;
+    ofFbo mainMaskFbo;
+    ofImage mainMaskImg;
+    
+    //videos
+    ofRectangle himawariAlpha;
+    ofRectangle kajiAlpha;
+    ofColor videoMaskColor;
+    int fadeCurrentTimeMilis;
+    int ct;
 };
 
 

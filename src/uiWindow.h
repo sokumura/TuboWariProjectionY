@@ -13,7 +13,7 @@
 #include "ofxSimpleGuiToo.h"
 #include "myXtionOperator.h"
 #include "ofxOpenCv.h"
-
+#include "magicTest.h"
 
 
 class uiWindow : public ofxFensterListener {
@@ -39,6 +39,8 @@ public:
     bool trDrawGlobalMap = false;
     ofPoint screenTexPoint;
     ofPoint screenTexWH;
+    
+    
 private:
     void monitorFboDraw(int pageFrom1, int controlNoFrom1,int blockNoFrom1, int blockNumByWidth, float scale);
     

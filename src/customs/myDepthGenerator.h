@@ -42,8 +42,10 @@ extern ofPoint depthCheckPoint[XTION_NUM];
 extern ofPoint depthCheckPoint2[XTION_NUM];
 extern int depthSlider[XTION_NUM];
 
+extern bool bDrawMesh;
 extern float pointSize;
 extern int step;
+
 
 class myDepthGenerator {
 public:

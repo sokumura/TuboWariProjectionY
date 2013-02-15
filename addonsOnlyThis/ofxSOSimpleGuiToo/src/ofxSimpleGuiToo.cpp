@@ -40,8 +40,22 @@ void ofxSimpleGuiToo::setup(string firstPageName) {
 	setDraw(true);
 	setPage(1);
 	autoHeight();
+    
+    exTextColor = config->textColor;
+    exBorderColor = config->borderColor;
 	
 	ofAddListener(ofEvents().keyPressed, this, &ofxSimpleGuiToo::keyPressed);
+}
+
+ofxSimpleGuiToo & ofxSimpleGuiToo::setTextColorParadox(bool paradox){
+    if (paradox) {
+        config->textColor = 0xff3d19;
+        config->borderColor = 0xff3d19;
+    } else {
+        config->textColor = exTextColor;
+        config->borderColor = exBorderColor;
+    }
+    return *this;
 }
 
 void ofxSimpleGuiToo::setForceHeight(int h) {

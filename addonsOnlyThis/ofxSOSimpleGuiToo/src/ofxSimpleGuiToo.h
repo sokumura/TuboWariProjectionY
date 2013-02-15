@@ -81,6 +81,9 @@ public:
 	void						autoHeight();
 	
 	void						nextPageWithBlank();		// cycles through pages, and closes after last page
+    
+    ofxSimpleGuiToo &           setTextColorParadox(bool paradox);//shuya added
+    int exTextColor, exBorderColor;
 	
 	ofxSimpleGuiPage&			page(int i);				// 1 based index of page
 	ofxSimpleGuiPage&			page(string name);			// returns page by name

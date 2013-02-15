@@ -18,6 +18,7 @@ public:
 	bool		focused;
 	bool		newColumn;
 	bool		hasTitle;
+    bool        textColorParadox;//shuya original
 	char		keyboardShortcut;
     
     ofxSimpleGuiConfig	*config;
