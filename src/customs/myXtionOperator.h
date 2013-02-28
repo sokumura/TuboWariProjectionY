@@ -36,6 +36,8 @@ public:
     
     void startOniRecording(int n);
     void stopOniRecording(int n);
+    void setUpAgain();
+    void myShutDownContext();
 
 private:
     myXtionOperator(const myXtionOperator& other);

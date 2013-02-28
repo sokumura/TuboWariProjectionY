@@ -18,7 +18,7 @@
 #include "ofMain.h"
 
 
-
+extern bool bUpdateXtion[XTION_NUM];
 extern bool bDraw[XTION_NUM];
 extern int bgCapturePlay[XTION_NUM];
 extern int thresholdNear[XTION_NUM];
@@ -33,14 +33,14 @@ extern float rotz[XTION_NUM];//7
 extern ofVec3f axis[XTION_NUM];//8
 extern bool bCaptureBg[XTION_NUM];
 extern bool bSaveBgAsImage[XTION_NUM];
-extern int realDepthMax[XTION_NUM];
 extern bool trLoadBg[XTION_NUM];
 extern bool trGetPointDepth[XTION_NUM];///
-extern int realDepthMax[XTION_NUM];
 extern int depthPointValue[XTION_NUM];///
 extern ofPoint depthCheckPoint[XTION_NUM];
 extern ofPoint depthCheckPoint2[XTION_NUM];
 extern int depthSlider[XTION_NUM];
+extern bool trSaveDepthByFrame[XTION_NUM];
+extern bool trStopSaveDepthByFrame[XTION_NUM];
 
 extern bool bDrawMesh;
 extern float pointSize;
@@ -104,9 +104,9 @@ private:
     void checkSwitchMethods();
     void saveBgImage();
     bool loadBgImage();
-    
     void bgSet();
-
+    
+    
     unsigned short  bgDepth[TOTAL_PIXEL];//背景のキャプチャ
     unsigned char   bgDepthChar[TOTAL_PIXEL];
     unsigned char   captureBgCountByPix[TOTAL_PIXEL];
@@ -116,8 +116,7 @@ private:
     
     XnDepthPixel depthMIN, depthMAX;//デプスのmin,maxをいれておく
     int thisNum;//このxtionの番号
-    
     int counter;
-	
+    int captureCounter;
 };
 

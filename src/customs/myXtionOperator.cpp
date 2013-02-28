@@ -8,6 +8,10 @@
 
 #include "myXtionOperator.h"
 
+
+extern bool bSetUp;
+extern bool bShutDown;
+
 //===========================
 //globals
 //===========================
@@ -15,14 +19,6 @@
 
 //===========================
 //===========================
-
-
-
-XnBool fileExists(const char *fn){
-	XnBool exists;
-	xnOSDoesFileExist(fn, &exists);
-	return exists;
-}
 
 myXtionOperator::myXtionOperator(){
 
@@ -32,6 +28,26 @@ myXtionOperator::~myXtionOperator(){
 
 }
 
+void myXtionOperator::setUpAgain(){
+    bool bCheck = false;
+    for (int i = 0; i < XTION_NUM; i++) {
+        bCheck = bUpdateXtion;
+        bUpdateXtion[i] = false;
+    }
+    if (bCheck) {
+        myShutDownContext();
+    }
+    this->setup();
+}
+
+void myXtionOperator::myShutDownContext(){
+    for (int i = 0; i < XTION_NUM; i++) {
+        bUpdateXtion[i] = false;
+    }
+    context.shutdown();
+    bShutDown = false;
+}
+
 void myXtionOperator::setup(){
     cout << "OpenNI operation was get started" << endl;
     context.setup();
@@ -39,31 +55,6 @@ void myXtionOperator::setup(){
     
     xn::NodeInfoList nodeList;
     XnStatus nRetVal = XN_STATUS_OK;
-
-//    if( USE_RECORED_DATA ){
-//        context.getXnContext().OpenFileRecording(RECORD_FILE_PATH);
-//        xn::Player player;
-//        
-//        nRetVal = context.getXnContext().FindExistingNode(XN_NODE_TYPE_PLAYER, player);
-//        CHECK_RC(nRetVal, "Find player");
-//        
-//        xn::NodeInfoList nodeList;
-//        player.EnumerateNodes(nodeList);
-//        for( xn::NodeInfoList::Iterator it = nodeList.Begin();
-//            it != nodeList.End(); ++it){
-//            
-//            if( (*it).GetDescription().Type == XN_NODE_TYPE_DEPTH ){
-//                nRetVal = context.getXnContext().FindExistingNode(XN_NODE_TYPE_DEPTH, depth_GRs[it]);
-//                CHECK_RC(nRetVal, "Find depth node");
-//            }
-//        }
-//    } else {
-//        LOG_I("Reading config from: '%s'", CONFIG_XML_PATH);
-//        
-//        nRetVal = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
-//
-//    }
-    //
     //
     nRetVal = context.getXnContext().EnumerateExistingNodes(nodeList);
     if (nRetVal != XN_STATUS_OK) {
@@ -98,23 +89,6 @@ void myXtionOperator::setup(){
             geneNum++;
         }
     }
-    
-//    for (int i = 0; i < geneNum; i++) {
-//        if( DO_RECORED && !USE_RECORED_DATA ){
-//            nRetVal = recorder[i].Create(context.getXnContext());
-//            char s[100];
-//            sprintf(s, "recTest_%u.oni", i);
-//            nRetVal = recorder[i].SetDestination(XN_RECORD_MEDIUM_FILE, (const XnChar *)s);
-//            
-//            CHECK_RC(nRetVal, "Set recorder destination file");
-//            
-//            nRetVal = recorder[i].AddNodeToRecording(depth_GRs[i].getXnDepthGenerator(), XN_CODEC_NULL);
-//            char c[100];
-//            sprintf(c , "Add depth node to recording No.%u",i);
-//            CHECK_RC(nRetVal, c);
-//        }
-//    }
-    
     generatorNum = geneNum;
     printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!\n%i 個のジェネレーターを作りました\n!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", generatorNum);
     
@@ -132,6 +106,13 @@ void myXtionOperator::update(){
         if (isNew){
             bNewDataXtion[i] = true;
         }
+    }
+    if (bSetUp) {
+        setUpAgain();
+        bSetUp = false;
+    }
+    if (bShutDown){
+        myShutDownContext();
     }
 }
 

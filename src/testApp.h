@@ -1,7 +1,10 @@
 #pragma once
 
 #include "uiWindow.h"
-#include "magicTest.h"
+#include "Maho.h"
+#include "ofxFastFboReader.h"
+#include "grotes.h"
+
 
 class testApp : public ofBaseApp{
 
@@ -13,7 +16,7 @@ public:
     void keyPressed  (int key);
     void keyReleased(int key){};
     void mouseMoved(int x, int y ){};
-    void mouseDragged(int x, int y, int button){};
+    void mouseDragged(int x, int y, int button);
     void mousePressed(int x, int y, int button){};
     void mouseReleased(int x, int y, int button){};
     void windowResized(int w, int h){};
@@ -29,14 +32,22 @@ public:
     ofxCvColorImage cImg;
     ofxCvGrayscaleImage gImg;
     ofxCvContourFinder cfinder;
+    ofxFastFboReader fboReader;
     
     //fenster
     uiWindow ui;
     int counter;
     
+    //openCv
+    
+    //grotesQ
+    
+    
     //magic
-    Goko1 goko1;
-    Keen keen1;
+    Maho maho;
+    
+    //another
+    Kirakira kirakira;
     
     //mask
     ofShader maskShader;
@@ -49,6 +60,16 @@ public:
     ofColor videoMaskColor;
     int fadeCurrentTimeMilis;
     int ct;
+    
+    //testMonitor
+    ofFbo testMonitor;
+    
+    //custom
+    void fadingWhite();
+    
+    //onetime
+    
+    
 };
 
 

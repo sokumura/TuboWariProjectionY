@@ -7,13 +7,11 @@
 
 #include "myDepthGenerator.h"
 
-
 myDepthGenerator::myDepthGenerator(){
 
     out_put_modes.nXRes = CAPTURE_WIDTH;
     out_put_modes.nYRes = CAPTURE_HEIGHT;
     out_put_modes.nFPS  = 30;
-    
     gettingPointDepth = false;
 }
 
@@ -43,6 +41,7 @@ bool myDepthGenerator::setup(xn::NodeInfo const& node, int num){
         bgDepthChar[i] = 0;
     }
     bgImg.allocate(CAPTURE_WIDTH, CAPTURE_HEIGHT, OF_IMAGE_GRAYSCALE);
+    
     depthBgPixel.allocate(CAPTURE_WIDTH, CAPTURE_HEIGHT, 1);
     loadBgImage();
     vboMesh.setMode(OF_PRIMITIVE_POINTS);
@@ -61,6 +60,7 @@ void myDepthGenerator::startGenerating(){
 
 //----------------------------------------------
 bool myDepthGenerator::update(){
+    if (!bUpdateXtion[thisNum]) return;
     bool isNewDataAvailable = false;
     if (depth_generator.IsNewDataAvailable()) {
         depth_generator.WaitAndUpdateData();
@@ -69,9 +69,9 @@ bool myDepthGenerator::update(){
         generateTexture();
         generateRealWorld(realWorld);
         
+        
         isNewDataAvailable = true;
     }
-    
     checkSwitchMethods();
     counter++;
     return isNewDataAvailable;
@@ -91,9 +91,11 @@ void myDepthGenerator::checkSwitchMethods(){
         saveBgImage();
         bSaveBgAsImage[thisNum];
     }
+
 }
 //----------------------------------------------
 void myDepthGenerator::draw(){
+    if (!bUpdateXtion[thisNum]) return;
     if (bDraw[thisNum]) {
         ofPushStyle();
         ofPushMatrix();
@@ -125,12 +127,6 @@ void  myDepthGenerator::generateCurrentDepth(){//不要なものを省いたdept
                 currentDepth[i] = *depth;
             } else {
                 currentDepth[i] = 0;
-            }
-            if (realDepthMax[thisNum] < *depth && *depth < depthMAX ) {
-                realDepthMax[thisNum] = *depth;
-            }
-            if (counter %100 == 1) {
-                realDepthMax[thisNum] = 0;
             }
         }
     }
@@ -232,6 +228,8 @@ void myDepthGenerator::saveBgImage(){
     bgImg.setFromPixels((unsigned short *)bgDepth, CAPTURE_WIDTH, CAPTURE_HEIGHT, OF_IMAGE_GRAYSCALE);
     bgImg.saveImage("depthCapture_no_" + ofToString(thisNum) + ".tiff");
 }
+
+
 //-------------------------------------------------
 void myDepthGenerator::bgSet(){
     int sPx, sPy, lPx, lPy = 0;
@@ -251,15 +249,8 @@ void myDepthGenerator::bgSet(){
     for (int y = sPy; y <= lPy; y++) {
         for (int x = sPx; x <= lPx; x++) {
             bgDepth[y * CAPTURE_WIDTH + x] = depthSlider[thisNum];
-            printf("x: %u, y:%u, value: %u\n", x, y, bgDepth[y * CAPTURE_WIDTH + x]);
         }
     }
-    printf("/////////////////////\n////////////////////////\n");
-    
-    
-//    if (counter % 200 == 0) {
-//        printf("sPx : %u, sPy : %u\nlPx : %u, lPy : %u", sPx, sPy, lPx, lPy);
-//    }
     
 }
 //-------------------------------------------------
